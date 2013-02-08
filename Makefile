@@ -6,7 +6,7 @@ bin = winnie
 
 dbg = -g
 opt = -O0
-inc = -Isrc -Isrc/shaders -Isrc/math
+#inc =
 
 CXX = g++
 CXXFLAGS = -pedantic -Wall $(dbg) $(opt) $(inc)

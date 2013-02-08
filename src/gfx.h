@@ -1,12 +1,7 @@
 #ifndef GFX_H_
 #define GFX_H_
 
-struct Rect {
-	int x;
-	int y;
-	int width;
-	int height;
-};
+#include "geom.h"
 
 bool init_gfx();
 void destroy_gfx();
