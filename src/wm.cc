@@ -47,3 +47,8 @@ void WindowManager::process_windows()
 		}
 	}
 }
+
+void WindowManager::add_window(Window *win)
+{
+	windows.push_back(win);
+}

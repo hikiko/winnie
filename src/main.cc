@@ -1,41 +1,47 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-#include "gfx.h"
+#include "winnie.h"
+
+static void display(Window *win);
+static void keyboard(Window *win, int key, bool pressed);
+static void cleanup();
 
 int main()
 {
-	if(!init_gfx()) {
-		return 1;
+	winnie_init();
+	atexit(cleanup);
+
+	Window *win1 = new Window;
+	win1->set_title("title1");
+	win1->move(5, 10);
+	win1->resize(600, 800);
+	win1->set_display_callback(display);
+	win1->set_keyboard_callback(keyboard);
+
+	wm->add_window(win1);
+
+	while(1) {
+		process_events();
 	}
 
-	set_cursor_visibility(false);
+	winnie_shutdown();
+}
 
-	unsigned char* fb = get_framebuffer();
-	Rect scrn_sz = get_screen_size();
+static void display(Window *win)
+{
+	fill_rect(win->get_rect(), 0, 0, 0);
+}
 
-	for(int i=0; i<scrn_sz.height; i++) {
-		for(int j=0; j<scrn_sz.width; j++) {
-			unsigned char color0[3] = {255, 0, 0};
-			unsigned char color1[3] = {0, 0, 255};
-			unsigned char* color;
-
-			//red blue chessboard 16 pxls size
-			if(((j >> 4) & 1) == ((i >> 4) & 1)) {
-				color = color0;
-			}
-			else {
-				color = color1;
-			}
-
-			*fb++ = color[0];
-			*fb++ = color[1];
-			*fb++ = color[2];
-			fb++;
-		}
+static void keyboard(Window *win, int key, bool pressed)
+{
+	switch(key) {
+	case 'q':
+		exit(0);
 	}
+}
 
-	getchar();
-	clear_screen(0, 0, 0);
-
+static void cleanup()
+{
 	destroy_gfx();
 }

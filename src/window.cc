@@ -57,6 +57,8 @@ void Window::invalidate()
 
 void Window::draw()
 {
+	//TODO
+	//titlebar, frame
 	callbacks.display(this);
 	dirty = false;
 }
@@ -70,4 +72,24 @@ unsigned char *Window::get_win_start_on_fb()
 int Window::get_scanline_width()
 {
 	return get_screen_size().x;
+}
+
+void Window::set_display_callback(DisplayFuncType func)
+{
+	callbacks.display = func;
+}
+
+void Window::set_keyboard_callback(KeyboardFuncType func)
+{
+	callbacks.keyboard = func;
+}
+
+void Window::set_mouse_button_callback(MouseButtonFuncType func)
+{
+	callbacks.button = func;
+}
+
+void Window::set_mouse_motion_callback(MouseMotionFuncType func)
+{
+	callbacks.motion = func;
 }

@@ -18,6 +18,8 @@ public:
 
 	void invalidate_region(const Rect &rect);
 	void process_windows();
+
+	void add_window(Window *win);
 };
 
 extern WindowManager *wm;

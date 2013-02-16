@@ -12,6 +12,8 @@ void process_events()
 	int mouse_fd = get_mouse_fd();
 
 	for(;;) {
+		wm->process_windows();
+
 		fd_set read_set;
 
 		FD_ZERO(&read_set);
@@ -28,7 +30,5 @@ void process_events()
 		if(FD_ISSET(mouse_fd, &read_set)) {
 			process_mouse_event();
 		}
-
-		wm->process_windows();
 	}
 }
