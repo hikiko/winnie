@@ -1,8 +1,13 @@
 #include "winnie.h"
+#include "keyboard.h"
 
 bool winnie_init()
 {
 	if(!init_gfx()) {
+		return false;
+	}
+
+	if(!init_keyboard()) {
 		return false;
 	}
 
@@ -13,4 +18,5 @@ bool winnie_init()
 void winnie_shutdown()
 {
 	destroy_gfx();
+	destroy_keyboard();
 }

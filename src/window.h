@@ -39,6 +39,11 @@ public:
 	void set_mouse_button_callback(MouseButtonFuncType func);
 	void set_mouse_motion_callback(MouseMotionFuncType func);
 
+	const DisplayFuncType get_display_callback() const;
+	const KeyboardFuncType get_keyboard_callback() const;
+	const MouseButtonFuncType get_mouse_button_callback() const;
+	const MouseMotionFuncType get_mouse_motion_callback() const;
+
 	// XXX remove if not needed
 	friend class WindowManager;
 };

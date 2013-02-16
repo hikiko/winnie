@@ -12,6 +12,7 @@ private:
 	std::list<Rect> dirty_rects;
 
 	int bg_color[3];
+	Window *focused_win;
 
 public:
 	WindowManager();
@@ -20,6 +21,10 @@ public:
 	void process_windows();
 
 	void add_window(Window *win);
+
+	void set_focused_window(Window *win);
+	const Window *get_focused_window() const;
+	Window *get_focused_window();
 };
 
 extern WindowManager *wm;

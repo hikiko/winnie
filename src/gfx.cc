@@ -58,6 +58,7 @@ bool init_gfx()
 
 void destroy_gfx()
 {
+	clear_screen(0, 0, 0);
 	close(dev_fd);
 	dev_fd = -1;
 

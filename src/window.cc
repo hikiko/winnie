@@ -93,3 +93,23 @@ void Window::set_mouse_motion_callback(MouseMotionFuncType func)
 {
 	callbacks.motion = func;
 }
+
+const DisplayFuncType Window::get_display_callback() const
+{
+	return callbacks.display;
+}
+
+const KeyboardFuncType Window::get_keyboard_callback() const
+{
+	return callbacks.keyboard;
+}
+
+const MouseButtonFuncType Window::get_mouse_button_callback() const
+{
+	return callbacks.button;
+}
+
+const MouseMotionFuncType Window::get_mouse_motion_callback() const
+{
+	return callbacks.motion;
+}

@@ -28,6 +28,7 @@ bool init_mouse()
 void destroy_mouse()
 {
 	close(dev_fd);
+	dev_fd = -1;
 }
 
 void set_mouse_bounds(const Rect &rect)

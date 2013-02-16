@@ -1,6 +1,9 @@
+#include <stdio.h>
+
 #include <errno.h>
 #include <unistd.h>
 #include <sys/select.h>
+
 #include "event.h"
 #include "wm.h"
 #include "keyboard.h"
@@ -25,10 +28,11 @@ void process_events()
 		while(select(maxfd + 1, &read_set, 0, 0, 0) == -1 && errno == EINTR);
 
 		if(FD_ISSET(keyb_fd, &read_set)) {
+			printf("WINNIE TODO PROCESS KEYB\n");
 			process_keyboard_event();
 		}
-		if(FD_ISSET(mouse_fd, &read_set)) {
+/*		if(FD_ISSET(mouse_fd, &read_set)) {
 			process_mouse_event();
-		}
+		}*/
 	}
 }

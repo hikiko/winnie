@@ -14,6 +14,8 @@ WindowManager::WindowManager()
 		throw std::runtime_error("Trying to create a second instance of WindowManager!\n");
 	}
 
+	focused_win = 0;
+
 	bg_color[0] = 210;
 	bg_color[1] = 106;
 	bg_color[2] = 106;
@@ -45,10 +47,30 @@ void WindowManager::process_windows()
 		if(intersect.width && intersect.height) {
 			(*it)->draw();
 		}
+		it++;
 	}
 }
 
 void WindowManager::add_window(Window *win)
 {
+	if(windows.empty()) {
+		focused_win = win;
+	}
+
 	windows.push_back(win);
+}
+
+void WindowManager::set_focused_window(Window *win)
+{
+	focused_win = win;
+}
+
+const Window *WindowManager::get_focused_window() const
+{
+	return focused_win;
+}
+
+Window *WindowManager::get_focused_window()
+{
+	return focused_win;
 }

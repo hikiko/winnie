@@ -24,8 +24,6 @@ int main()
 	while(1) {
 		process_events();
 	}
-
-	winnie_shutdown();
 }
 
 static void display(Window *win)
@@ -43,5 +41,5 @@ static void keyboard(Window *win, int key, bool pressed)
 
 static void cleanup()
 {
-	destroy_gfx();
+	winnie_shutdown();
 }
