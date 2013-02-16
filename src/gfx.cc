@@ -14,7 +14,7 @@
 
 #define FRAMEBUFFER_SIZE(xsz, ysz, bpp) ((xsz) * (ysz) * (bpp) / CHAR_BIT)
 
-static unsigned char* framebuffer;
+static unsigned char *framebuffer;
 static int dev_fd = -1;
 
 static Rect screen_rect;
@@ -65,7 +65,7 @@ void destroy_gfx()
 	framebuffer = 0;
 }
 
-unsigned char* get_framebuffer()
+unsigned char *get_framebuffer()
 {
 	return framebuffer;
 }
@@ -82,12 +82,19 @@ int get_color_depth()
 
 void clear_screen(int r, int g, int b)
 {
-	unsigned char* fb = framebuffer;
-	for(int i=0; i<screen_rect.width * screen_rect.height; i++) {
-		*fb++ = r;
-		*fb++ = g;
-		*fb++ = b;
-		fb++;
+	fill_rect(screen_rect, r, g, b);
+}
+
+void fill_rect(const Rect &rect, int r, int g, int b)
+{
+	unsigned char *fb = framebuffer + rect.x + screen_rect.width * rect.y; 
+	for(int i=0; i<rect.height; i++) {
+		for(int j=0; j<rect.width; j++) {
+			fb[j * 4] = r;
+			fb[j * 4 + 1] = g;
+			fb[j * 4 + 2] = b;
+		}
+		fb += screen_rect.width * 4;
 	}
 }
 

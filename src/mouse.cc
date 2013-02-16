@@ -1,3 +1,13 @@
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <termios.h>
+#include <unistd.h>
+
 #include "mouse.h"
 #include "geom.h"
 
@@ -7,13 +17,17 @@ static int pointer_x, pointer_y;
 
 bool init_mouse()
 {
-	// TODO open /dev/psaux (see O_NONBLOCK comment below)
+	if((dev_fd = open("/dev/psaux", O_NONBLOCK)) == -1) {
+		fprintf(stderr, "Cannot open /dev/psaux : %s\n", strerror(errno));
+		return false;
+	}
+
 	return true;
 }
 
 void destroy_mouse()
 {
-	// TODO close /dev/psaux
+	close(dev_fd);
 }
 
 void set_mouse_bounds(const Rect &rect)

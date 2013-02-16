@@ -11,6 +11,8 @@ private:
 	std::list<Window*> windows;
 	std::list<Rect> dirty_rects;
 
+	int bg_color[3];
+
 public:
 	WindowManager();
 
