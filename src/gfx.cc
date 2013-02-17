@@ -59,7 +59,11 @@ bool init_gfx()
 void destroy_gfx()
 {
 	clear_screen(0, 0, 0);
-	close(dev_fd);
+
+	if(dev_fd != -1) {
+		close(dev_fd);
+	}
+
 	dev_fd = -1;
 
 	munmap(framebuffer, FRAMEBUFFER_SIZE(screen_rect.width, screen_rect.height, color_depth));

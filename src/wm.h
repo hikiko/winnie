@@ -25,6 +25,8 @@ public:
 	void set_focused_window(Window *win);
 	const Window *get_focused_window() const;
 	Window *get_focused_window();
+
+	Window *get_window_at_pos(int pointer_x, int pointer_y);
 };
 
 extern WindowManager *wm;

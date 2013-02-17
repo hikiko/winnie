@@ -22,6 +22,17 @@ const Rect &Window::get_rect() const
 	return rect;
 }
 
+bool Window::contains_ptr(int ptr_x, int ptr_y)
+{
+	if((rect.x <= ptr_x) && ((rect.x + rect.width) >= ptr_x)) {
+		if((rect.y <= ptr_y) && (ptr_y <= (rect.y + rect.height))) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void Window::move(int x, int y)
 {
 	invalidate();	// moved, should redraw, MUST BE CALLED FIRST

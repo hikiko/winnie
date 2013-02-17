@@ -15,7 +15,7 @@ int main()
 	Window *win1 = new Window;
 	win1->set_title("title1");
 	win1->move(5, 10);
-	win1->resize(600, 800);
+	win1->resize(200, 300);
 	win1->set_display_callback(display);
 	win1->set_keyboard_callback(keyboard);
 
@@ -28,7 +28,7 @@ int main()
 
 static void display(Window *win)
 {
-	fill_rect(win->get_rect(), 0, 0, 0);
+	fill_rect(win->get_rect(), 106, 106, 250);
 }
 
 static void keyboard(Window *win, int key, bool pressed)

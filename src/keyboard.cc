@@ -62,9 +62,11 @@ void destroy_keyboard()
 	}
 
 	ttystate = CANONICAL;
-	close(dev_fd);
 
-	dev_fd = -1;
+	if(dev_fd != -1) {
+		close(dev_fd);
+		dev_fd = -1;
+	}
 }
 
 int get_keyboard_fd()
@@ -79,9 +81,9 @@ void process_keyboard_event()
 		return;
 	}
 
-	if(key == 'q') {
+/*	if(key == 'q') {
 		exit(0);
-	}
+	}*/
 
 	Window *focused_win = wm->get_focused_window();
 	if(focused_win) {
