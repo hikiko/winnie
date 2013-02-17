@@ -22,7 +22,7 @@ const Rect &Window::get_rect() const
 	return rect;
 }
 
-bool Window::contains_ptr(int ptr_x, int ptr_y)
+bool Window::contains_point(int ptr_x, int ptr_y)
 {
 	if((rect.x <= ptr_x) && ((rect.x + rect.width) >= ptr_x)) {
 		if((rect.y <= ptr_y) && (ptr_y <= (rect.y + rect.height))) {

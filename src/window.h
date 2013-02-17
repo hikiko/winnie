@@ -17,7 +17,7 @@ public:
 	~Window();
 
 	const Rect &get_rect() const;
-	bool contains_ptr(int ptr_x, int ptr_y);
+	bool contains_point(int ptr_x, int ptr_y);
 
 	void move(int x, int y);
 	void resize(int x, int y);

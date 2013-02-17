@@ -77,10 +77,10 @@ Window *WindowManager::get_focused_window()
 
 Window *WindowManager::get_window_at_pos(int pointer_x, int pointer_y)
 {
-	Window *win = new Window;
+	Window *win = 0;
 	std::list<Window*>::reverse_iterator rit = windows.rbegin();
 	while(rit != windows.rend()) {
-		if((*rit)->contains_ptr(pointer_x, pointer_y)) {
+		if((*rit)->contains_point(pointer_x, pointer_y)) {
 			win = *rit;
 			break;
 		}

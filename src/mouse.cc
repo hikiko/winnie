@@ -67,7 +67,7 @@ void process_mouse_event()
 	}
 
 	/* - process each event and update the pointer and button state
-	 * - send each pointer move and button press/release to the tompost window
+	 * - send each pointer move and button press/release to the topmost window
 	 *   with the pointer on it.
 	 */
 }
