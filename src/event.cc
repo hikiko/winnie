@@ -31,8 +31,8 @@ void process_events()
 			printf("WINNIE TODO PROCESS KEYB\n");
 			process_keyboard_event();
 		}
-/*		if(FD_ISSET(mouse_fd, &read_set)) {
+		if(FD_ISSET(mouse_fd, &read_set)) {
 			process_mouse_event();
-		}*/
+		}
 	}
 }

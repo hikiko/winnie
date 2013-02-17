@@ -28,7 +28,12 @@ int main()
 
 static void display(Window *win)
 {
-	fill_rect(win->get_rect(), 106, 106, 250);
+	if(wm->get_focused_window() != win) {
+		fill_rect(win->get_rect(), 106, 106, 250);
+	}
+	else {
+		fill_rect(win->get_rect(), 0, 0, 255);
+	}
 }
 
 static void keyboard(Window *win, int key, bool pressed)

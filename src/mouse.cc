@@ -1,4 +1,5 @@
 #include <errno.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,6 +12,8 @@
 #include "geom.h"
 #include "gfx.h"
 #include "mouse.h"
+#include "window.h"
+#include "wm.h"
 
 #define BN_LEFT		1
 #define BN_RIGHT	2
@@ -66,10 +69,48 @@ void process_mouse_event()
 		return;
 	}
 
-	/* - process each event and update the pointer and button state
-	 * - send each pointer move and button press/release to the topmost window
+	Window *top = wm->get_window_at_pos(pointer_x, pointer_y);
+	if(top) {
+		wm->set_focused_window(top);
+	}
+	else {
+		wm->set_focused_window(0);
+		return;
+	}
+
+	 /* - send each pointer move and button press/release to the topmost window
 	 *   with the pointer on it.
 	 */
+
+	int dx = pointer_x - prev_x;
+	int dy = pointer_y - prev_y;
+
+	if(dx || dy) {
+		MouseMotionFuncType motion_callback = top->get_mouse_motion_callback();
+		if(motion_callback) {
+			Rect rect = top->get_rect();
+			motion_callback(top, pointer_x - rect.x, pointer_y - rect.y);
+		}
+	}
+	
+	MouseButtonFuncType button_callback = top->get_mouse_button_callback();
+	if(button_callback && (bnstate != prev_state)) {
+		int num_bits = sizeof bnstate * CHAR_BIT;
+		for(int i=0; i<num_bits; i++) {
+			int s = (bnstate >> i) & 1;
+			int prev_s = (prev_state >> i) & 1;
+			if(s != prev_s) {
+				button_callback(top, i, s);
+			}
+		}
+	}
+
+	unsigned char *fb = get_framebuffer();
+	Rect scr = get_screen_size();
+	fb += (scr.width * pointer_y + pointer_x) * 4;
+	fb[0] = 0;
+	fb[1] = 0;
+	fb[2] = 0;
 }
 
 void get_pointer_pos(int *x, int *y)

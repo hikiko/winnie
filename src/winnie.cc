@@ -1,5 +1,6 @@
 #include "winnie.h"
 #include "keyboard.h"
+#include "mouse.h"
 
 bool winnie_init()
 {
@@ -8,6 +9,10 @@ bool winnie_init()
 	}
 
 	if(!init_keyboard()) {
+		return false;
+	}
+
+	if(!init_mouse()) {
 		return false;
 	}
 
