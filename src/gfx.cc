@@ -92,7 +92,7 @@ void clear_screen(int r, int g, int b)
 
 void fill_rect(const Rect &rect, int r, int g, int b)
 {
-	unsigned char *fb = framebuffer + (rect.x + screen_rect.width * rect.y) * 4; 
+	unsigned char *fb = framebuffer + (rect.x + screen_rect.width * rect.y) * 4;
 	for(int i=0; i<rect.height; i++) {
 		for(int j=0; j<rect.width; j++) {
 			fb[j * 4] = b;
@@ -111,4 +111,19 @@ void set_cursor_visibility(bool visible)
 	if(ioctl(dev_fd, FBIO_CURSOR, &curs) == -1) {
 		fprintf(stderr, "Cannot toggle cursor visibility : %s\n", strerror(errno));
 	}
+}
+
+void blit(unsigned char *src_img, const Rect &src_rect, unsigned char* dest_img, int dest_x, int dest_y)
+{
+	Rect dest_rect;
+
+	if(dest_x < screen_rect.x) {
+		dest_rect.x = screen_rect.x;
+	}
+
+	if(dest_y < screen_rect.y) {
+		dest_rect.y = screen_rect.y;
+	}
+
+	//TODO :p zzz
 }
