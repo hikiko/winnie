@@ -24,4 +24,5 @@ void winnie_shutdown()
 {
 	destroy_gfx();
 	destroy_keyboard();
+	destroy_mouse();
 }

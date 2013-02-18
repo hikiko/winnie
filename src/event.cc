@@ -28,7 +28,6 @@ void process_events()
 		while(select(maxfd + 1, &read_set, 0, 0, 0) == -1 && errno == EINTR);
 
 		if(FD_ISSET(keyb_fd, &read_set)) {
-			printf("WINNIE TODO PROCESS KEYB\n");
 			process_keyboard_event();
 		}
 		if(FD_ISSET(mouse_fd, &read_set)) {

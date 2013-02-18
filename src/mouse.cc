@@ -27,7 +27,7 @@ static int bnstate;
 
 bool init_mouse()
 {
-	if((dev_fd = open("/dev/psaux", O_RDONLY)) == -1) {
+	if((dev_fd = open("/dev/psaux", O_RDONLY | O_NONBLOCK)) == -1) {
 		fprintf(stderr, "Cannot open /dev/psaux : %s\n", strerror(errno));
 		return false;
 	}
@@ -69,6 +69,14 @@ void process_mouse_event()
 		return;
 	}
 
+	unsigned char *fb = get_framebuffer();
+	fb += (bounds.width * pointer_y + pointer_x) * 4;
+	fb[0] = 0;
+	fb[1] = 0;
+	fb[2] = 0;
+
+	//printf("pointer (x, y) = (%d, %d)\r\n", pointer_x, pointer_y);
+
 	Window *top = wm->get_window_at_pos(pointer_x, pointer_y);
 	if(top) {
 		wm->set_focused_window(top);
@@ -92,7 +100,7 @@ void process_mouse_event()
 			motion_callback(top, pointer_x - rect.x, pointer_y - rect.y);
 		}
 	}
-	
+
 	MouseButtonFuncType button_callback = top->get_mouse_button_callback();
 	if(button_callback && (bnstate != prev_state)) {
 		int num_bits = sizeof bnstate * CHAR_BIT;
@@ -104,13 +112,6 @@ void process_mouse_event()
 			}
 		}
 	}
-
-	unsigned char *fb = get_framebuffer();
-	Rect scr = get_screen_size();
-	fb += (scr.width * pointer_y + pointer_x) * 4;
-	fb[0] = 0;
-	fb[1] = 0;
-	fb[2] = 0;
 }
 
 void get_pointer_pos(int *x, int *y)
