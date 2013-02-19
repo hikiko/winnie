@@ -69,11 +69,11 @@ void process_mouse_event()
 		return;
 	}
 
-	unsigned char *fb = get_framebuffer();
+	/*unsigned char *fb = get_framebuffer();
 	fb += (bounds.width * pointer_y + pointer_x) * 4;
 	fb[0] = 0;
 	fb[1] = 0;
-	fb[2] = 0;
+	fb[2] = 0;*/
 
 	//printf("pointer (x, y) = (%d, %d)\r\n", pointer_x, pointer_y);
 

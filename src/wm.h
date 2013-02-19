@@ -3,6 +3,7 @@
 
 #include <list>
 #include "geom.h"
+#include "pixmap.h"
 
 class Window;
 
@@ -13,6 +14,8 @@ private:
 
 	int bg_color[3];
 	Window *focused_win;
+
+	Pixmap mouse_cursor;
 
 public:
 	WindowManager();

@@ -2,6 +2,8 @@
 #include "gfx.h"
 #include "wm.h"
 #include "window.h"
+#include "mouse.h"
+#include "mouse_cursor.h"
 
 WindowManager *wm;
 static WindowManager wminst;
@@ -19,6 +21,19 @@ WindowManager::WindowManager()
 	bg_color[0] = 210;
 	bg_color[1] = 106;
 	bg_color[2] = 106;
+
+	mouse_cursor.set_image(mouse_cursor_width, mouse_cursor_height);
+	unsigned char *pixels = mouse_cursor.get_image();
+
+	for(int i=0; i<mouse_cursor_height; i++) {
+		for(int j=0; j<mouse_cursor_width; j++) {
+			int val = mouse_cursor_bw[i * mouse_cursor_width + j];
+			*pixels++ = val;
+			*pixels++ = val;
+			*pixels++ = val;
+			*pixels++ = 255;
+		}
+	}
 }
 
 void WindowManager::invalidate_region(const Rect &rect)
@@ -49,6 +64,17 @@ void WindowManager::process_windows()
 		}
 		it++;
 	}
+
+	// draw mouse cursor
+	int mouse_x, mouse_y;
+	get_pointer_pos(&mouse_x, &mouse_y);
+
+	blit_key(mouse_cursor.get_image(), mouse_cursor.get_rect(),
+			get_framebuffer(), get_screen_size(), mouse_x, mouse_y,
+			0, 0, 0);
+
+	Rect mouse_rect = {mouse_x, mouse_y, mouse_cursor.get_width(), mouse_cursor.get_height()};
+	invalidate_region(mouse_rect);
 }
 
 void WindowManager::add_window(Window *win)

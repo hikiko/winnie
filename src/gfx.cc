@@ -113,17 +113,97 @@ void set_cursor_visibility(bool visible)
 	}
 }
 
-void blit(unsigned char *src_img, const Rect &src_rect, unsigned char* dest_img, int dest_x, int dest_y)
+void blit(unsigned char *src_img, const Rect &src_rect, unsigned char* dest_img,
+		const Rect &dest_rect, int dest_x, int dest_y)
 {
-	Rect dest_rect;
+	int width = src_rect.width;
+	int height = src_rect.height;
 
-	if(dest_x < screen_rect.x) {
-		dest_rect.x = screen_rect.x;
+	int xoffs = dest_x - dest_rect.x;
+	if(xoffs < 0) {
+		dest_x = dest_rect.x;
+		width += xoffs;
 	}
 
-	if(dest_y < screen_rect.y) {
-		dest_rect.y = screen_rect.y;
+	int yoffs = dest_y - dest_rect.y;
+	if(yoffs < 0) {
+		dest_y = dest_rect.y;
+		height += yoffs;
 	}
 
-	//TODO :p zzz
+	int xend = dest_x + width;
+	if(xend >= dest_rect.width) {
+		width -= xend - dest_rect.width;
+	}
+
+	int yend = dest_y + height;
+	if(yend >= dest_rect.height) {
+		height -= yend - dest_rect.height;
+	}
+
+	if(width <= 0 || height <= 0) {
+		return;
+	}
+
+	unsigned char *sptr = src_img + (src_rect.y * src_rect.width + src_rect.x) * 4;
+	unsigned char *dptr = dest_img + (dest_y * dest_rect.width + dest_x) * 4;
+
+	for(int i=0; i<height; i++) {
+		memcpy(dptr, sptr, width * 4);
+		sptr += src_rect.width * 4;
+		dptr += dest_rect.width * 4;
+	}
+}
+
+void blit_key(unsigned char *src_img, const Rect &src_rect, unsigned char* dest_img,
+		const Rect &dest_rect, int dest_x, int dest_y, int key_r, int key_g, int key_b)
+{
+	int width = src_rect.width;
+	int height = src_rect.height;
+
+	int xoffs = dest_x - dest_rect.x;
+	if(xoffs < 0) {
+		dest_x = dest_rect.x;
+		width += xoffs;
+	}
+
+	int yoffs = dest_y - dest_rect.y;
+	if(yoffs < 0) {
+		dest_y = dest_rect.y;
+		height += yoffs;
+	}
+
+	int xend = dest_x + width;
+	if(xend >= dest_rect.width) {
+		width -= xend - dest_rect.width;
+	}
+
+	int yend = dest_y + height;
+	if(yend >= dest_rect.height) {
+		height -= yend - dest_rect.height;
+	}
+
+	if(width <= 0 || height <= 0) {
+		return;
+	}
+
+	unsigned char *sptr = src_img + (src_rect.y * src_rect.width + src_rect.x) * 4;
+	unsigned char *dptr = dest_img + (dest_y * dest_rect.width + dest_x) * 4;
+
+	for(int i=0; i<height; i++) {
+		for(int j=0; j<width; j++) {
+			int r = sptr[j * 4];
+			int g = sptr[j * 4 + 1];
+			int b = sptr[j * 4 + 2];
+
+			if(r != key_r || g != key_g || b != key_b) {
+				dptr[j * 4] = r;
+				dptr[j * 4 + 1] = g;
+				dptr[j * 4 + 2] = b;
+			}
+		}
+
+		sptr += src_rect.width * 4;
+		dptr += dest_rect.width * 4;
+	}
 }
