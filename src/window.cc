@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <string.h>
+
 #include "gfx.h"
 #include "window.h"
 #include "wm.h"
@@ -10,10 +12,16 @@ Window::Window()
 	rect.width = rect.height = 128;
 	memset(&callbacks, 0, sizeof callbacks);
 	dirty = true;
+	managed = true;
 }
 
 Window::~Window()
 {
+	for(size_t i=0; i<children.size(); i++) {
+		wm->remove_window(children[i]);
+		delete children[i];
+	}
+
 	delete [] title;
 }
 
@@ -61,12 +69,27 @@ void Window::invalidate()
 	wm->invalidate_region(rect);
 }
 
-void Window::draw()
+void Window::draw(const Rect &dirty_region)
 {
 	//TODO
 	//titlebar, frame
-	callbacks.display(this);
-	dirty = false;
+
+	Rect intersect = rect_intersection(rect, dirty_region);
+	if(intersect.width && intersect.height) {
+		if(callbacks.display) {
+			callbacks.display(this);
+		}
+		dirty = false;
+
+		draw_children(rect);
+	}
+}
+
+void Window::draw_children(const Rect &dirty_region)
+{
+	for(size_t i=0; i<children.size(); i++) {
+		children[i]->draw(dirty_region);
+	}
 }
 
 unsigned char *Window::get_win_start_on_fb()
@@ -78,6 +101,16 @@ unsigned char *Window::get_win_start_on_fb()
 int Window::get_scanline_width()
 {
 	return get_screen_size().x;
+}
+
+void Window::set_managed(bool managed)
+{
+	this->managed = managed;
+}
+
+bool Window::get_managed() const
+{
+	return managed;
 }
 
 void Window::set_display_callback(DisplayFuncType func)
@@ -118,4 +151,33 @@ const MouseButtonFuncType Window::get_mouse_button_callback() const
 const MouseMotionFuncType Window::get_mouse_motion_callback() const
 {
 	return callbacks.motion;
+}
+
+void Window::add_child(Window *win)
+{
+	children.push_back(win);
+	if(win->parent) {
+		win->parent->remove_child(win);
+	}
+	win->parent = this;
+}
+
+void Window::remove_child(Window *win)
+{
+	std::vector<Window*>::iterator it;
+	it = std::find(children.begin(), children.end(), win);
+	if(it != children.end()) {
+		children.erase(it);
+		win->parent = 0;
+	}
+}
+
+const Window *Window::get_parent() const
+{
+	return parent;
+}
+
+Window *Window::get_parent()
+{
+	return parent;
 }

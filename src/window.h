@@ -1,6 +1,8 @@
 #ifndef WINDOW_H_
 #define WINDOW_H_
 
+#include <vector>
+
 #include "geom.h"
 #include "event.h"
 
@@ -10,7 +12,11 @@ private:
 	Rect rect;
 	Callbacks callbacks;
 
+	std::vector<Window*> children;
+	Window* parent;
+
 	bool dirty;
+	bool managed; // whether the wm manages (+decorates) this win
 
 public:
 	Window();
@@ -30,10 +36,14 @@ public:
 	 */
 	void invalidate();
 
-	void draw();
+	void draw(const Rect &dirty_region);
+	void draw_children(const Rect &dirty_region);
 
 	unsigned char *get_win_start_on_fb();
 	int get_scanline_width();
+
+	void set_managed(bool managed);
+	bool get_managed() const;
 
 	void set_display_callback(DisplayFuncType func);
 	void set_keyboard_callback(KeyboardFuncType func);
@@ -44,6 +54,13 @@ public:
 	const KeyboardFuncType get_keyboard_callback() const;
 	const MouseButtonFuncType get_mouse_button_callback() const;
 	const MouseMotionFuncType get_mouse_motion_callback() const;
+
+	// win hierarchy
+	void add_child(Window *win);
+	void remove_child(Window *win);
+
+	const Window *get_parent() const;
+	Window *get_parent();
 
 	// XXX remove if not needed
 	friend class WindowManager;

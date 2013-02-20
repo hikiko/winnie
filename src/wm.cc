@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <stdexcept>
+
 #include "gfx.h"
 #include "wm.h"
 #include "window.h"
@@ -8,6 +10,47 @@
 WindowManager *wm;
 static WindowManager wminst;
 
+static void display(Window *win);
+static void mouse(Window *win, int key, bool pressed);
+static void motion(Window *win, int x, int y);
+
+void WindowManager::create_frame(Window *win)
+{
+	Window *frame = new Window;
+	Window *parent = win->get_parent();
+
+	frame->set_display_callback(display);
+//	frame->set_mouse_button_callback(mouse);
+//	frame->set_mouse_motion_callback(motion);
+
+	frame->add_child(win);
+	frames.push_back(frame);
+
+	Rect win_rect = win->get_rect();
+	frame->move(win_rect.x - frame_thickness, 
+			win_rect.y - frame_thickness - titlebar_thickness);
+	frame->resize(win_rect.width + frame_thickness * 2, 
+			win_rect.height + frame_thickness * 2 + titlebar_thickness);
+
+	parent->add_child(frame);
+}
+
+void WindowManager::destroy_frame(Window *win)
+{
+	Window *frame = win->parent;
+	if(!frame) {
+		return;
+	}
+
+	std::list<Window*>::iterator it;
+	it = std::find(frames.begin(), frames.end(), frame);
+	if(it != frames.end()) {
+		root_win->add_child(win);
+		frames.erase(it);
+		delete frame;
+	}
+}
+
 WindowManager::WindowManager()
 {
 	if(!wm) {
@@ -16,11 +59,22 @@ WindowManager::WindowManager()
 		throw std::runtime_error("Trying to create a second instance of WindowManager!\n");
 	}
 
+	root_win = new Window;
+	root_win->resize(get_screen_size().width, get_screen_size().height);
+	root_win->move(0, 0);
+	root_win->set_managed(false);
+
 	focused_win = 0;
 
 	bg_color[0] = 210;
 	bg_color[1] = 106;
 	bg_color[2] = 106;
+
+	frame_thickness = 2;
+	titlebar_thickness = 4;
+
+	frame_fcolor[0] = frame_fcolor[1] = frame_fcolor[2] = 142;
+	frame_ucolor[0] = frame_ucolor[1] = frame_ucolor[2] = 210;
 
 	mouse_cursor.set_image(mouse_cursor_width, mouse_cursor_height);
 	unsigned char *pixels = mouse_cursor.get_image();
@@ -34,6 +88,11 @@ WindowManager::WindowManager()
 			*pixels++ = 255;
 		}
 	}
+}
+
+WindowManager::~WindowManager()
+{
+	delete root_win;
 }
 
 void WindowManager::invalidate_region(const Rect &rect)
@@ -55,15 +114,8 @@ void WindowManager::process_windows()
 	dirty_rects.clear();
 
 	fill_rect(uni, bg_color[0], bg_color[1], bg_color[2]);
-	
-	std::list<Window*>::iterator it = windows.begin();
-	while(it != windows.end()) {
-		Rect intersect = rect_intersection((*it)->rect, uni); 
-		if(intersect.width && intersect.height) {
-			(*it)->draw();
-		}
-		it++;
-	}
+
+	root_win->draw_children(uni);
 
 	// draw mouse cursor
 	int mouse_x, mouse_y;
@@ -79,11 +131,31 @@ void WindowManager::process_windows()
 
 void WindowManager::add_window(Window *win)
 {
+	if(!win || win == root_win) {
+		return;
+	}
+
+	root_win->add_child(win);
+
 	if(windows.empty()) {
 		focused_win = win;
 	}
 
+	if(win->get_managed()) {
+		create_frame(win);
+	}
+
 	windows.push_back(win);
+}
+
+void WindowManager::remove_window(Window *win)
+{
+	std::list<Window*>::iterator it;
+	it = std::find(windows.begin(), windows.end(), win);
+
+	if(it != windows.end()) {
+		windows.erase(it);
+	}
 }
 
 void WindowManager::set_focused_window(Window *win)
@@ -115,3 +187,14 @@ Window *WindowManager::get_window_at_pos(int pointer_x, int pointer_y)
 
 	return win;
 }
+
+static void display(Window *win)
+{
+	if(win->get_managed()) {
+		fill_rect(win->get_rect(), 255, 211, 5);
+		win->draw(win->get_parent()->get_rect());
+	}
+}
+
+//static void mouse(Window *win, int key, bool pressed);
+//static void motion(Window *win, int x, int y);
