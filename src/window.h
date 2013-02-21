@@ -17,6 +17,7 @@ private:
 
 	bool dirty;
 	bool managed; // whether the wm manages (+decorates) this win
+	bool focusable;
 
 public:
 	Window();
@@ -45,6 +46,9 @@ public:
 	void set_managed(bool managed);
 	bool get_managed() const;
 
+	void set_focusable(bool focusable);
+	bool get_focusable() const;
+
 	void set_display_callback(DisplayFuncType func);
 	void set_keyboard_callback(KeyboardFuncType func);
 	void set_mouse_button_callback(MouseButtonFuncType func);
@@ -58,6 +62,9 @@ public:
 	// win hierarchy
 	void add_child(Window *win);
 	void remove_child(Window *win);
+
+	Window **get_children();
+	int get_children_count() const;
 
 	const Window *get_parent() const;
 	Window *get_parent();

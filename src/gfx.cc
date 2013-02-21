@@ -92,6 +92,14 @@ void clear_screen(int r, int g, int b)
 
 void fill_rect(const Rect &rect, int r, int g, int b)
 {
+	if(rect.x < 0) {
+		rect.x = 0;
+	}
+
+	if(rect.y < 0) {
+		rect.y = 0;
+	}
+
 	unsigned char *fb = framebuffer + (rect.x + screen_rect.width * rect.y) * 4;
 	for(int i=0; i<rect.height; i++) {
 		for(int j=0; j<rect.width; j++) {

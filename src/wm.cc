@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <stdexcept>
+#include <stdio.h>	// TODO
 
 #include "gfx.h"
 #include "wm.h"
@@ -11,7 +12,7 @@ WindowManager *wm;
 static WindowManager wminst;
 
 static void display(Window *win);
-static void mouse(Window *win, int key, bool pressed);
+static void mouse(Window *win, int bn, bool pressed);
 static void motion(Window *win, int x, int y);
 
 void WindowManager::create_frame(Window *win)
@@ -20,11 +21,13 @@ void WindowManager::create_frame(Window *win)
 	Window *parent = win->get_parent();
 
 	frame->set_display_callback(display);
-//	frame->set_mouse_button_callback(mouse);
-//	frame->set_mouse_motion_callback(motion);
+	frame->set_mouse_button_callback(mouse);
+	frame->set_mouse_motion_callback(motion);
 
 	frame->add_child(win);
-	frames.push_back(frame);
+	frame->set_focusable(false);
+
+	windows.push_back(frame);
 
 	Rect win_rect = win->get_rect();
 	frame->move(win_rect.x - frame_thickness, 
@@ -43,10 +46,10 @@ void WindowManager::destroy_frame(Window *win)
 	}
 
 	std::list<Window*>::iterator it;
-	it = std::find(frames.begin(), frames.end(), frame);
-	if(it != frames.end()) {
+	it = std::find(windows.begin(), windows.end(), frame);
+	if(it != windows.end()) {
 		root_win->add_child(win);
-		frames.erase(it);
+		windows.erase(it);
 		delete frame;
 	}
 }
@@ -160,7 +163,25 @@ void WindowManager::remove_window(Window *win)
 
 void WindowManager::set_focused_window(Window *win)
 {
-	focused_win = win;
+	if(!win) {
+		focused_win = 0;
+		return;
+	}
+
+	if(win->get_focusable()) {
+		focused_win = win;
+		return;
+	}
+
+	Window **children = win->get_children();
+	for(int i=0; i<win->get_children_count(); i++) {
+		if(children[0]->get_focusable()) {
+			set_focused_window(children[0]);
+			return;
+		}
+	}
+
+	focused_win = 0;
 }
 
 const Window *WindowManager::get_focused_window() const
@@ -175,17 +196,17 @@ Window *WindowManager::get_focused_window()
 
 Window *WindowManager::get_window_at_pos(int pointer_x, int pointer_y)
 {
-	Window *win = 0;
 	std::list<Window*>::reverse_iterator rit = windows.rbegin();
 	while(rit != windows.rend()) {
-		if((*rit)->contains_point(pointer_x, pointer_y)) {
-			win = *rit;
-			break;
+		Window *w = *rit++;
+		Window *parent = w->get_parent();
+
+		if(parent == root_win && w->contains_point(pointer_x, pointer_y)) {
+			return w;
 		}
-		rit++;
 	}
 
-	return win;
+	return 0;
 }
 
 static void display(Window *win)
@@ -196,5 +217,30 @@ static void display(Window *win)
 	}
 }
 
-//static void mouse(Window *win, int key, bool pressed);
-//static void motion(Window *win, int x, int y);
+static int prev_x = -1, prev_y;
+
+static void mouse(Window *win, int bn, bool pressed)
+{
+	printf("mouse callback (%d, %s)\n", bn, pressed ? "pressed" : "released");
+	if(bn == 0) {
+		if(pressed) {
+			get_pointer_pos(&prev_x, &prev_y);
+		} else {
+			prev_x = -1;
+		}
+	}
+}
+
+static void motion(Window *win, int x, int y)
+{
+	int left_bn = get_button(0);
+	if(left_bn && prev_x != -1) {
+		int dx = x - prev_x;
+		int dy = y - prev_y;
+		prev_x = x;
+		prev_y = y;
+
+		Rect rect = win->get_rect();
+		win->move(rect.x + dx, rect.y + dy);
+	}
+}

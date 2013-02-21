@@ -13,6 +13,7 @@ Window::Window()
 	memset(&callbacks, 0, sizeof callbacks);
 	dirty = true;
 	managed = true;
+	focusable = true;
 }
 
 Window::~Window()
@@ -113,6 +114,16 @@ bool Window::get_managed() const
 	return managed;
 }
 
+void Window::set_focusable(bool focusable)
+{
+	this->focusable = focusable;
+}
+
+bool Window::get_focusable() const
+{
+	return focusable;
+}
+
 void Window::set_display_callback(DisplayFuncType func)
 {
 	callbacks.display = func;
@@ -170,6 +181,19 @@ void Window::remove_child(Window *win)
 		children.erase(it);
 		win->parent = 0;
 	}
+}
+
+Window **Window::get_children()
+{
+	if(children.empty()) {
+		return 0;
+	}
+	return &children[0];
+}
+
+int Window::get_children_count() const
+{
+	return (int)children.size();
 }
 
 const Window *Window::get_parent() const
