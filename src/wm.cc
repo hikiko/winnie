@@ -247,8 +247,8 @@ static void motion(Window *win, int x, int y)
 	if(left_bn && prev_x != -1) {
 		int dx = x - prev_x;
 		int dy = y - prev_y;
-		prev_x = x;
-		prev_y = y;
+		prev_x = x - dx;
+		prev_y = y - dy;
 
 		Rect rect = win->get_rect();
 		win->move(rect.x + dx, rect.y + dy);

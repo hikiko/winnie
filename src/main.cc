@@ -30,11 +30,9 @@ static void display(Window *win)
 {
 	if(wm->get_focused_window() != win) {
 		fill_rect(win->get_rect(), 106, 106, 250);
-		printf("drawing unfocused\n");
 	}
 	else {
 		fill_rect(win->get_rect(), 0, 0, 255);
-		printf("drawing FOCUSED\n");
 	}
 }
 
