@@ -2,7 +2,7 @@
 #define GEOM_H_
 
 struct Rect {
-	mutable int x, y;
+	int x, y;
 	int width, height;
 };
 

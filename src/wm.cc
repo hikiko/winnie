@@ -221,7 +221,6 @@ static int prev_x = -1, prev_y;
 
 static void mouse(Window *win, int bn, bool pressed)
 {
-	printf("mouse callback (%d, %s)\n", bn, pressed ? "pressed" : "released");
 	if(bn == 0) {
 		if(pressed) {
 			get_pointer_pos(&prev_x, &prev_y);

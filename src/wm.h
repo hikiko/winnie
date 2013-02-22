@@ -11,7 +11,6 @@ class Window;
 class WindowManager {
 private:
 	std::list<Window*> windows;
-	std::list<Window*> frames;
 
 	std::list<Rect> dirty_rects;
 
