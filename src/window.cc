@@ -7,6 +7,7 @@
 
 Window::Window()
 {
+	parent = 0;
 	title = 0;
 	rect.x = rect.y = 0;
 	rect.width = rect.height = 128;
@@ -29,6 +30,11 @@ Window::~Window()
 const Rect &Window::get_rect() const
 {
 	return rect;
+}
+
+const Rect &Window::get_absolute_rect() const
+{
+	return rect;	// TODO implement absolute rectangle thingy
 }
 
 bool Window::contains_point(int ptr_x, int ptr_y)

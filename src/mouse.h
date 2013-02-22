@@ -12,9 +12,7 @@ int get_mouse_fd();
 void process_mouse_event();
 
 void get_pointer_pos(int *x, int *y);
-int get_button_state(int bn);
+int get_button_state();
 int get_button(int bn);
-
-int read_mouse();
 
 #endif	// MOUSE_H_

@@ -1,3 +1,4 @@
+#ifdef WINNIE_FBDEV
 #include <errno.h>
 #include <limits.h>
 #include <stdio.h>
@@ -18,7 +19,7 @@ static unsigned char *framebuffer;
 static int dev_fd = -1;
 
 static Rect screen_rect;
-static int color_depth; //bits per pixel
+static int color_depth; // bits per pixel
 
 bool init_gfx()
 {
@@ -207,9 +208,9 @@ void blit_key(unsigned char *src_img, const Rect &src_rect, unsigned char* dest_
 			int b = sptr[j * 4 + 2];
 
 			if(r != key_r || g != key_g || b != key_b) {
-				dptr[j * 4] = r;
+				dptr[j * 4] = b;
 				dptr[j * 4 + 1] = g;
-				dptr[j * 4 + 2] = b;
+				dptr[j * 4 + 2] = r;
 			}
 		}
 
@@ -217,3 +218,9 @@ void blit_key(unsigned char *src_img, const Rect &src_rect, unsigned char* dest_
 		dptr += dest_rect.width * 4;
 	}
 }
+
+void gfx_update()
+{
+}
+
+#endif // WINNIE_FBDEV

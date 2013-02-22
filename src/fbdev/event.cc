@@ -1,3 +1,4 @@
+#ifdef WINNIE_FBDEV
 #include <stdio.h>
 
 #include <errno.h>
@@ -35,3 +36,4 @@ void process_events()
 		}
 	}
 }
+#endif // WINNIE_FBDEV

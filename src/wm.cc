@@ -130,6 +130,8 @@ void WindowManager::process_windows()
 
 	Rect mouse_rect = {mouse_x, mouse_y, mouse_cursor.get_width(), mouse_cursor.get_height()};
 	invalidate_region(mouse_rect);
+
+	gfx_update();
 }
 
 void WindowManager::add_window(Window *win)
@@ -163,6 +165,18 @@ void WindowManager::remove_window(Window *win)
 
 void WindowManager::set_focused_window(Window *win)
 {
+	if(win == focused_win) {
+		return;
+	}
+
+	if(focused_win) {
+		// invalidate the frame (if any)
+		Window *parent = focused_win->get_parent();
+		if(parent && parent != root_win) {
+			parent->invalidate();
+		}
+	}
+
 	if(!win) {
 		focused_win = 0;
 		return;
@@ -211,10 +225,7 @@ Window *WindowManager::get_window_at_pos(int pointer_x, int pointer_y)
 
 static void display(Window *win)
 {
-	if(win->get_managed()) {
-		fill_rect(win->get_rect(), 255, 211, 5);
-		win->draw(win->get_parent()->get_rect());
-	}
+	fill_rect(win->get_rect(), 255, 211, 5);
 }
 
 static int prev_x = -1, prev_y;

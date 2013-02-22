@@ -1,3 +1,4 @@
+#ifdef WINNIE_FBDEV
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -89,7 +90,7 @@ void process_keyboard_event()
 	if(focused_win) {
 		KeyboardFuncType keyb_callback = focused_win->get_keyboard_callback();
 		if(keyb_callback) {
-			keyb_callback(focused_win, key, true);
+			keyb_callback(focused_win, key, true); //TODO: true??
 		}
 	}
 
@@ -98,3 +99,4 @@ void process_keyboard_event()
 	 * - otherwise send keypress/release to focused window
 	 */
 }
+#endif // WINNIE_FBDEV

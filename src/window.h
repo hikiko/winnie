@@ -24,6 +24,7 @@ public:
 	~Window();
 
 	const Rect &get_rect() const;
+	const Rect &get_absolute_rect() const;
 	bool contains_point(int ptr_x, int ptr_y);
 
 	void move(int x, int y);

@@ -1,3 +1,4 @@
+#ifdef WINNIE_FBDEV
 #include <errno.h>
 #include <limits.h>
 #include <stdio.h>
@@ -19,6 +20,7 @@
 #define BN_RIGHT	2
 #define BN_MIDDLE	4
 
+static int read_mouse();
 
 static int dev_fd = -1;	// file descriptor for /dev/psaux
 static Rect bounds;
@@ -75,7 +77,6 @@ void process_mouse_event()
 	}
 	else {
 		wm->set_focused_window(0);
-		return;
 	}
 
 	 /* - send each pointer move and button press/release to the topmost window
@@ -85,16 +86,16 @@ void process_mouse_event()
 	int dx = pointer_x - prev_x;
 	int dy = pointer_y - prev_y;
 
-	if(dx || dy) {
+	if((dx || dy) && top) {
 		MouseMotionFuncType motion_callback = top->get_mouse_motion_callback();
 		if(motion_callback) {
-			Rect rect = top->get_rect();
+			Rect rect = top->get_absolute_rect();
 			motion_callback(top, pointer_x - rect.x, pointer_y - rect.y);
 		}
 	}
 
-	MouseButtonFuncType button_callback = top->get_mouse_button_callback();
-	if(button_callback && (bnstate != prev_state)) {
+	MouseButtonFuncType button_callback;
+	if((bnstate != prev_state) && top && (button_callback = top->get_mouse_button_callback())) {
 		int num_bits = sizeof bnstate * CHAR_BIT;
 		for(int i=0; i<num_bits; i++) {
 			int s = (bnstate >> i) & 1;
@@ -112,7 +113,7 @@ void get_pointer_pos(int *x, int *y)
 	*y = pointer_y;
 }
 
-int get_button_state(int bn)
+int get_button_state()
 {
 	return bnstate;
 }
@@ -125,8 +126,7 @@ int get_button(int bn)
 	return (bnstate & (1 << bn)) != 0;
 }
 
-
-int read_mouse()
+static int read_mouse()
 {
 	int rd;
 	signed char state[3] = {0, 0, 0};
@@ -158,3 +158,4 @@ int read_mouse()
 
 	return 0;
 }
+#endif // WINNIE_FBDEV
