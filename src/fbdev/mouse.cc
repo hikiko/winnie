@@ -101,7 +101,8 @@ void process_mouse_event()
 			int s = (bnstate >> i) & 1;
 			int prev_s = (prev_state >> i) & 1;
 			if(s != prev_s) {
-				button_callback(top, i, s);
+				Rect rect = top->get_absolute_rect();
+				button_callback(top, i, s, pointer_x - rect.x, pointer_y - rect.y);
 			}
 		}
 	}
