@@ -32,15 +32,28 @@ const Rect &Window::get_rect() const
 	return rect;
 }
 
-const Rect &Window::get_absolute_rect() const
+Rect Window::get_absolute_rect() const
 {
-	return rect;	// TODO implement absolute rectangle thingy
+	if(!parent) {
+		return rect;
+	}
+
+	Rect absolute_rect;
+	absolute_rect = parent->get_absolute_rect();
+
+	absolute_rect.x += rect.x;
+	absolute_rect.y += rect.y;
+	absolute_rect.width = rect.width;
+	absolute_rect.height = rect.height;
+
+	return absolute_rect;
 }
 
 bool Window::contains_point(int ptr_x, int ptr_y)
 {
-	return ptr_x >= rect.x && ptr_x < rect.x + rect.width &&
-			ptr_y >= rect.y && ptr_y < rect.y + rect.height;
+	Rect abs_rect = get_absolute_rect();
+	return ptr_x >= abs_rect.x && ptr_x < abs_rect.x + abs_rect.width &&
+			ptr_y >= abs_rect.y && ptr_y < abs_rect.y + abs_rect.height;
 }
 
 void Window::move(int x, int y)
@@ -73,7 +86,8 @@ const char *Window::get_title() const
 void Window::invalidate()
 {
 	dirty = true;
-	wm->invalidate_region(rect);
+	Rect abs_rect = get_absolute_rect(); 
+	wm->invalidate_region(abs_rect);
 }
 
 void Window::draw(const Rect &dirty_region)
@@ -102,7 +116,8 @@ void Window::draw_children(const Rect &dirty_region)
 unsigned char *Window::get_win_start_on_fb()
 {
 	unsigned char *fb = get_framebuffer();
-	return fb + get_color_depth() * (get_screen_size().x * rect.y + rect.x) / 8;
+	Rect abs_rect = get_absolute_rect();
+	return fb + get_color_depth() * (get_screen_size().x * abs_rect.y + abs_rect.x) / 8;
 }
 
 int Window::get_scanline_width()

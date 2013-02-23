@@ -29,10 +29,10 @@ int main()
 static void display(Window *win)
 {
 	if(wm->get_focused_window() != win) {
-		fill_rect(win->get_rect(), 106, 106, 250);
+		fill_rect(win->get_absolute_rect(), 106, 106, 250);
 	}
 	else {
-		fill_rect(win->get_rect(), 0, 0, 255);
+		fill_rect(win->get_absolute_rect(), 0, 0, 255);
 	}
 }
 

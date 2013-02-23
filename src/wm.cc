@@ -35,6 +35,7 @@ void WindowManager::create_frame(Window *win)
 	frame->resize(win_rect.width + frame_thickness * 2, 
 			win_rect.height + frame_thickness * 2 + titlebar_thickness);
 
+	win->move(frame_thickness, frame_thickness + titlebar_thickness);
 	parent->add_child(frame);
 }
 
@@ -225,18 +226,19 @@ Window *WindowManager::get_window_at_pos(int pointer_x, int pointer_y)
 
 static void display(Window *win)
 {
-	fill_rect(win->get_rect(), 255, 211, 5);
+	fill_rect(win->get_absolute_rect(), 255, 211, 5);
 }
 
-static int prev_x = -1, prev_y;
+static int prev_x, prev_y;
 
 static void mouse(Window *win, int bn, bool pressed)
 {
 	if(bn == 0) {
 		if(pressed) {
 			get_pointer_pos(&prev_x, &prev_y);
+			printf("pressed: %d\n", prev_x);
 		} else {
-			prev_x = -1;
+			printf("released\n");
 		}
 	}
 }
@@ -244,12 +246,13 @@ static void mouse(Window *win, int bn, bool pressed)
 static void motion(Window *win, int x, int y)
 {
 	int left_bn = get_button(0);
-	if(left_bn && prev_x != -1) {
+	if(left_bn) {
 		int dx = x - prev_x;
 		int dy = y - prev_y;
 		prev_x = x - dx;
 		prev_y = y - dy;
 
+		printf("dx: %d dy: %d\n", dx, dy);
 		Rect rect = win->get_rect();
 		win->move(rect.x + dx, rect.y + dy);
 	}
