@@ -12,7 +12,7 @@ WindowManager *wm;
 static WindowManager wminst;
 
 static void display(Window *win);
-static void mouse(Window *win, int bn, bool pressed);
+static void mouse(Window *win, int bn, bool pressed, int x, int y);
 static void motion(Window *win, int x, int y);
 
 void WindowManager::create_frame(Window *win)
@@ -30,9 +30,9 @@ void WindowManager::create_frame(Window *win)
 	windows.push_back(frame);
 
 	Rect win_rect = win->get_rect();
-	frame->move(win_rect.x - frame_thickness, 
+	frame->move(win_rect.x - frame_thickness,
 			win_rect.y - frame_thickness - titlebar_thickness);
-	frame->resize(win_rect.width + frame_thickness * 2, 
+	frame->resize(win_rect.width + frame_thickness * 2,
 			win_rect.height + frame_thickness * 2 + titlebar_thickness);
 
 	win->move(frame_thickness, frame_thickness + titlebar_thickness);
@@ -231,14 +231,12 @@ static void display(Window *win)
 
 static int prev_x, prev_y;
 
-static void mouse(Window *win, int bn, bool pressed)
+static void mouse(Window *win, int bn, bool pressed, int x, int y)
 {
 	if(bn == 0) {
 		if(pressed) {
-			get_pointer_pos(&prev_x, &prev_y);
-			printf("pressed: %d\n", prev_x);
-		} else {
-			printf("released\n");
+			prev_x = x;
+			prev_y = y;
 		}
 	}
 }
@@ -252,7 +250,6 @@ static void motion(Window *win, int x, int y)
 		prev_x = x - dx;
 		prev_y = y - dy;
 
-		printf("dx: %d dy: %d\n", dx, dy);
 		Rect rect = win->get_rect();
 		win->move(rect.x + dx, rect.y + dy);
 	}

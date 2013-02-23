@@ -63,7 +63,8 @@ void process_mouse_event()
 			bnstate &= ~(1 << bn);
 		}
 		if(top && (button_callback = top->get_mouse_button_callback())) {
-			button_callback(top, bn, sdl_event.button.state);
+			Rect rect = top->get_absolute_rect();
+			button_callback(top, bn, sdl_event.button.state, pointer_x - rect.x, pointer_y - rect.y);
 		}
 	}
 }

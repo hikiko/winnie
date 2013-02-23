@@ -86,15 +86,12 @@ const char *Window::get_title() const
 void Window::invalidate()
 {
 	dirty = true;
-	Rect abs_rect = get_absolute_rect(); 
+	Rect abs_rect = get_absolute_rect();
 	wm->invalidate_region(abs_rect);
 }
 
 void Window::draw(const Rect &dirty_region)
 {
-	//TODO
-	//titlebar, frame
-
 	Rect intersect = rect_intersection(rect, dirty_region);
 	if(intersect.width && intersect.height) {
 		if(callbacks.display) {

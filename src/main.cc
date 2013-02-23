@@ -5,6 +5,8 @@
 
 static void display(Window *win);
 static void keyboard(Window *win, int key, bool pressed);
+static void button(Window *win, int bn, bool pressed, int x, int y);
+static void motion(Window *win, int x, int y);
 static void cleanup();
 
 int main()
@@ -18,6 +20,8 @@ int main()
 	win1->resize(200, 300);
 	win1->set_display_callback(display);
 	win1->set_keyboard_callback(keyboard);
+	win1->set_mouse_button_callback(button);
+	win1->set_mouse_motion_callback(motion);
 
 	wm->add_window(win1);
 
@@ -42,6 +46,16 @@ static void keyboard(Window *win, int key, bool pressed)
 	case 'q':
 		exit(0);
 	}
+}
+
+static void button(Window *win, int bn, bool pressed, int x, int y)
+{
+	printf("WINDOW(%p) button %d %s\n", (void*)win, bn, pressed ? "press" : "release");
+}
+
+static void motion(Window *win, int x, int y)
+{
+	printf("WINDOW(%p) motion %d %d\n", (void*)win, x, y);
 }
 
 static void cleanup()
