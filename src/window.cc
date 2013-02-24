@@ -143,6 +143,11 @@ bool Window::get_focusable() const
 	return focusable;
 }
 
+bool Window::get_dirty() const
+{
+	return dirty;
+}
+
 void Window::set_display_callback(DisplayFuncType func)
 {
 	callbacks.display = func;

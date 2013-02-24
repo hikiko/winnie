@@ -50,6 +50,8 @@ public:
 	void set_focusable(bool focusable);
 	bool get_focusable() const;
 
+	bool get_dirty() const;
+
 	void set_display_callback(DisplayFuncType func);
 	void set_keyboard_callback(KeyboardFuncType func);
 	void set_mouse_button_callback(MouseButtonFuncType func);
