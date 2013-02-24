@@ -23,9 +23,8 @@ void WindowManager::create_frame(Window *win)
 	frame->set_display_callback(display);
 	frame->set_mouse_button_callback(mouse);
 	frame->set_mouse_motion_callback(motion);
-
-	frame->add_child(win);
 	frame->set_focusable(false);
+	frame->add_child(win);
 
 	windows.push_back(frame);
 

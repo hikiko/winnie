@@ -55,6 +55,9 @@ bool init_gfx()
 		return false;
 	}
 
+// TODO: uncomment when I find how to use intelfb instead of i915 GRRRR.-	
+
+/*
 	fb_vblank vblank;
 	if(ioctl(dev_fd, FBIOGET_VBLANK, &vblank) == -1) {
 		fprintf(stderr, "FBIOGET_VBLANK error: %s\n", strerror(errno));
@@ -64,6 +67,7 @@ bool init_gfx()
 		printf("count: %d\n", vblank.count);
 		printf("beam position: %d, %d\n", vblank.hcount, vblank.vcount);
 	}
+*/
 
 	return true;
 }
@@ -247,16 +251,9 @@ void gfx_update()
 void wait_vsync()
 {
 	unsigned long arg = 0;
-
-	timeval tvstart, tvend;
-	gettimeofday(&tvstart, 0);
-	
 	if(ioctl(dev_fd, FBIO_WAITFORVSYNC, &arg) == -1) {
-		printf("ioctl error %s\n", strerror(errno));
+//		printf("ioctl error %s\n", strerror(errno));
 	}
-
-	gettimeofday(&tvend, 0);
-	printf("%ld %ld\n", tvend.tv_sec - tvstart.tv_sec, tvend.tv_usec - tvstart.tv_usec);
 }
 
 #endif // WINNIE_FBDEV

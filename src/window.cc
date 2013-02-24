@@ -92,14 +92,15 @@ void Window::invalidate()
 
 void Window::draw(const Rect &dirty_region)
 {
-	Rect intersect = rect_intersection(rect, dirty_region);
+	Rect abs_rect = get_absolute_rect();
+	Rect intersect = rect_intersection(abs_rect, dirty_region);
 	if(intersect.width && intersect.height) {
 		if(callbacks.display) {
 			callbacks.display(this);
 		}
 		dirty = false;
 
-		draw_children(rect);
+		draw_children(abs_rect);
 	}
 }
 
