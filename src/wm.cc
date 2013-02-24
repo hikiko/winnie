@@ -73,8 +73,8 @@ WindowManager::WindowManager()
 	bg_color[1] = 106;
 	bg_color[2] = 106;
 
-	frame_thickness = 2;
-	titlebar_thickness = 4;
+	frame_thickness = 8;
+	titlebar_thickness = 16;
 
 	frame_fcolor[0] = frame_fcolor[1] = frame_fcolor[2] = 142;
 	frame_ucolor[0] = frame_ucolor[1] = frame_ucolor[2] = 210;

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "winnie.h"
 
@@ -26,7 +27,17 @@ int main()
 	win1->set_mouse_button_callback(button);
 	win1->set_mouse_motion_callback(motion);
 
+	Window *win2 = new Window;
+	win2->set_title("title2");
+	win2->move(150, 10);
+	win2->resize(200, 300);
+	win2->set_display_callback(display);
+	win2->set_keyboard_callback(keyboard);
+	win2->set_mouse_button_callback(button);
+	win2->set_mouse_motion_callback(motion);
+
 	wm->add_window(win1);
+	wm->add_window(win2);
 
 	while(1) {
 		process_events();
@@ -35,11 +46,16 @@ int main()
 
 static void display(Window *win)
 {
-	if(wm->get_focused_window() != win) {
-		fill_rect(win->get_absolute_rect(), 106, 106, 250);
+	const char *win_title = win->get_title();
+	const char *t1 = "title1";
+	const char *t2 = "title2";
+
+	if(!strcmp(win_title, t1)) {
+		fill_rect(win->get_absolute_rect(), 255, 0, 0);
 	}
-	else {
-		fill_rect(win->get_absolute_rect(), 0, 0, 255);
+
+	if(!strcmp(win_title, t2)) {
+		fill_rect(win->get_absolute_rect(), 0, 255, 0);
 	}
 }
 
