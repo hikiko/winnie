@@ -95,12 +95,20 @@ void fill_rect(const Rect &rect, int r, int g, int b)
 {
 	Rect drect = rect;
 
-	if(drect.x < 0) {
-		drect.x = 0;
+	if(drect.x < screen_rect.x) {
+		drect.x = screen_rect.x;
 	}
 
-	if(drect.y < 0) {
-		drect.y = 0;
+	if(drect.y < screen_rect.y) {
+		drect.y = screen_rect.y;
+	}
+
+	if(drect.x + drect.width > screen_rect.width) {
+		drect.width = screen_rect.width - drect.x;
+	}
+
+	if(drect.y + drect.height > screen_rect.height) {
+		drect.height = screen_rect.height - drect.y;
 	}
 
 	unsigned char *fb = framebuffer + (drect.x + screen_rect.width * drect.y) * 4;
