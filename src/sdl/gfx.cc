@@ -167,4 +167,8 @@ void gfx_update()
 	SDL_UpdateRect(fbsurf, 0, 0, 0, 0);
 }
 
+void wait_vsync()
+{
+}
+
 #endif // WINNIE_SDL

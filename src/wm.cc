@@ -117,6 +117,8 @@ void WindowManager::process_windows()
 	}
 	dirty_rects.clear();
 
+	wait_vsync();
+
 	fill_rect(uni, bg_color[0], bg_color[1], bg_color[2]);
 
 	root_win->draw_children(uni);

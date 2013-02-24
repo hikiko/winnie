@@ -11,7 +11,10 @@ static void cleanup();
 
 int main()
 {
-	winnie_init();
+	if(!winnie_init()) {
+		exit(1);
+	}
+
 	atexit(cleanup);
 
 	Window *win1 = new Window;

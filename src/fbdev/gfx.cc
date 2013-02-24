@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
+#include <sys/time.h>
 #include <unistd.h>
 
 #include <linux/fb.h>
@@ -52,6 +53,16 @@ bool init_gfx()
 		dev_fd = -1;
 		fprintf(stderr, "Cannot map the framebuffer to memory : %s\n", strerror(errno));
 		return false;
+	}
+
+	fb_vblank vblank;
+	if(ioctl(dev_fd, FBIOGET_VBLANK, &vblank) == -1) {
+		fprintf(stderr, "FBIOGET_VBLANK error: %s\n", strerror(errno));
+	}
+	else {
+		printf("flags: %x\n", vblank.flags);
+		printf("count: %d\n", vblank.count);
+		printf("beam position: %d, %d\n", vblank.hcount, vblank.vcount);
 	}
 
 	return true;
@@ -231,6 +242,21 @@ void blit_key(unsigned char *src_img, const Rect &src_rect, unsigned char* dest_
 
 void gfx_update()
 {
+}
+
+void wait_vsync()
+{
+	unsigned long arg = 0;
+
+	timeval tvstart, tvend;
+	gettimeofday(&tvstart, 0);
+	
+	if(ioctl(dev_fd, FBIO_WAITFORVSYNC, &arg) == -1) {
+		printf("ioctl error %s\n", strerror(errno));
+	}
+
+	gettimeofday(&tvend, 0);
+	printf("%ld %ld\n", tvend.tv_sec - tvstart.tv_sec, tvend.tv_usec - tvstart.tv_usec);
 }
 
 #endif // WINNIE_FBDEV

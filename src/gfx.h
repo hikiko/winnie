@@ -23,4 +23,6 @@ void blit_key(unsigned char *src_img, const Rect &src_rect, unsigned char* dest_
 
 void gfx_update();
 
+void wait_vsync(); // vertical synchronization
+
 #endif //GFX_H_
