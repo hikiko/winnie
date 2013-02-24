@@ -19,7 +19,7 @@ int main()
 	atexit(cleanup);
 
 	Window *win1 = new Window;
-	win1->set_title("title1");
+	win1->set_title("red");
 	win1->move(5, 10);
 	win1->resize(200, 300);
 	win1->set_display_callback(display);
@@ -28,7 +28,7 @@ int main()
 	win1->set_mouse_motion_callback(motion);
 
 	Window *win2 = new Window;
-	win2->set_title("title2");
+	win2->set_title("green");
 	win2->move(150, 10);
 	win2->resize(200, 300);
 	win2->set_display_callback(display);
@@ -47,8 +47,8 @@ int main()
 static void display(Window *win)
 {
 	const char *win_title = win->get_title();
-	const char *t1 = "title1";
-	const char *t2 = "title2";
+	const char *t1 = "red";
+	const char *t2 = "green";
 
 	if(!strcmp(win_title, t1)) {
 		fill_rect(win->get_absolute_rect(), 255, 0, 0);

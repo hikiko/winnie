@@ -34,13 +34,15 @@ void process_mouse_event()
 	MouseMotionFuncType motion_callback = 0;
 	MouseButtonFuncType button_callback = 0;
 
-	Window *top = wm->get_window_at_pos(pointer_x, pointer_y);
-
-	if(top) {
-		wm->set_focused_window(top);
-	}
-	else {
-		wm->set_focused_window(0);
+	Window *top;
+	if(!(top = wm->get_grab_window())) {
+		top = wm->get_window_at_pos(pointer_x, pointer_y);
+		if(top) {
+			wm->set_focused_window(top);
+		}
+		else {
+			wm->set_focused_window(0);
+		}
 	}
 
 	switch(sdl_event.type) {

@@ -45,6 +45,10 @@ void WindowManager::destroy_frame(Window *win)
 		return;
 	}
 
+	if(grab_win == win) {
+		release_mouse();
+	}
+
 	std::list<Window*>::iterator it;
 	it = std::find(windows.begin(), windows.end(), frame);
 	if(it != windows.end()) {
@@ -167,7 +171,7 @@ void WindowManager::remove_window(Window *win)
 
 void WindowManager::set_focused_window(Window *win)
 {
-	if(win == focused_win) {
+	if(win && win == focused_win) {
 		return;
 	}
 
@@ -225,6 +229,21 @@ Window *WindowManager::get_window_at_pos(int pointer_x, int pointer_y)
 	return 0;
 }
 
+Window *WindowManager::get_grab_window() const
+{
+	return grab_win;
+}
+
+void WindowManager::grab_mouse(Window *win)
+{
+	grab_win = win;
+}
+
+void WindowManager::release_mouse()
+{
+	grab_win = 0;
+}
+
 static void display(Window *win)
 {
 	fill_rect(win->get_absolute_rect(), 255, 211, 5);
@@ -236,8 +255,12 @@ static void mouse(Window *win, int bn, bool pressed, int x, int y)
 {
 	if(bn == 0) {
 		if(pressed) {
+			wm->grab_mouse(win);
 			prev_x = x;
 			prev_y = y;
+		}
+		else {
+			wm->release_mouse();
 		}
 	}
 }

@@ -22,6 +22,7 @@ private:
 
 	Window *root_win;
 	Window *focused_win;
+	Window *grab_win;
 
 	Pixmap mouse_cursor;
 
@@ -43,6 +44,11 @@ public:
 	Window *get_focused_window();
 
 	Window *get_window_at_pos(int pointer_x, int pointer_y);
+
+	Window *get_grab_window() const;
+
+	void grab_mouse(Window *win);
+	void release_mouse();
 };
 
 extern WindowManager *wm;
