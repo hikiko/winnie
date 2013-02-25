@@ -28,7 +28,7 @@ int main()
 	win1->set_mouse_motion_callback(motion);
 
 	Window *win2 = new Window;
-	win2->set_title("green");
+	win2->set_title("yellow");
 	win2->move(150, 10);
 	win2->resize(200, 300);
 	win2->set_display_callback(display);
@@ -48,14 +48,14 @@ static void display(Window *win)
 {
 	const char *win_title = win->get_title();
 	const char *t1 = "red";
-	const char *t2 = "green";
+	const char *t2 = "yellow";
 
 	if(!strcmp(win_title, t1)) {
-		fill_rect(win->get_absolute_rect(), 255, 0, 0);
+		fill_rect(win->get_absolute_rect(), 247, 68, 50);
 	}
 
 	if(!strcmp(win_title, t2)) {
-		fill_rect(win->get_absolute_rect(), 0, 255, 0);
+		fill_rect(win->get_absolute_rect(), 255, 215, 78);
 	}
 }
 

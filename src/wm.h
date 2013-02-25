@@ -45,6 +45,11 @@ public:
 
 	Window *get_window_at_pos(int pointer_x, int pointer_y);
 
+	void set_focused_frame_color(int r, int g, int b);
+	void get_focused_frame_color(int *r, int *g, int *b);
+
+	void set_unfocused_frame_color(int r, int g, int b);
+
 	Window *get_grab_window() const;
 
 	void grab_mouse(Window *win);
