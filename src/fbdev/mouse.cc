@@ -71,12 +71,15 @@ void process_mouse_event()
 		return;
 	}
 
-	Window *top = wm->get_window_at_pos(pointer_x, pointer_y);
-	if(top) {
-		wm->set_focused_window(top);
-	}
-	else {
-		wm->set_focused_window(0);
+	Window *top;
+	if(!(top = wm->get_grab_window())) {
+		top = wm->get_window_at_pos(pointer_x, pointer_y);
+		if(top) {
+			wm->set_focused_window(top);
+		}
+		else {
+			wm->set_focused_window(0);
+		}
 	}
 
 	 /* - send each pointer move and button press/release to the topmost window
