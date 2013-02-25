@@ -38,7 +38,7 @@ public:
 	 */
 	void invalidate();
 
-	void draw(const Rect &dirty_region);
+	void draw(Rect *dirty_region);
 	void draw_children(const Rect &dirty_region);
 
 	unsigned char *get_win_start_on_fb();

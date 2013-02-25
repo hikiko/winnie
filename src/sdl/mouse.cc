@@ -34,11 +34,11 @@ void process_mouse_event()
 	MouseMotionFuncType motion_callback = 0;
 	MouseButtonFuncType button_callback = 0;
 
-	Window *top;
-	if(!(top = wm->get_grab_window())) {
-		top = wm->get_window_at_pos(pointer_x, pointer_y);
-		if(top) {
-			wm->set_focused_window(top);
+	Window *win;
+	if(!(win = wm->get_grab_window())) {
+		win = wm->get_window_at_pos(pointer_x, pointer_y);
+		if(win) {
+			wm->set_focused_window(win);
 		}
 		else {
 			wm->set_focused_window(0);
@@ -49,9 +49,9 @@ void process_mouse_event()
 	case SDL_MOUSEMOTION:
 		pointer_x = sdl_event.motion.x;
 		pointer_y = sdl_event.motion.y;
-		if(top && (motion_callback = top->get_mouse_motion_callback())) {
-			Rect rect = top->get_absolute_rect();
-			motion_callback(top, pointer_x - rect.x, pointer_y - rect.y);
+		if(win && (motion_callback = win->get_mouse_motion_callback())) {
+			Rect rect = win->get_absolute_rect();
+			motion_callback(win, pointer_x - rect.x, pointer_y - rect.y);
 		}
 		break;
 
@@ -64,9 +64,9 @@ void process_mouse_event()
 		else {
 			bnstate &= ~(1 << bn);
 		}
-		if(top && (button_callback = top->get_mouse_button_callback())) {
-			Rect rect = top->get_absolute_rect();
-			button_callback(top, bn, sdl_event.button.state, pointer_x - rect.x, pointer_y - rect.y);
+		if(win && (button_callback = win->get_mouse_button_callback())) {
+			Rect rect = win->get_absolute_rect();
+			button_callback(win, bn, sdl_event.button.state, pointer_x - rect.x, pointer_y - rect.y);
 		}
 	}
 }

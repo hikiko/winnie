@@ -270,6 +270,40 @@ void WindowManager::release_mouse()
 	grab_win = 0;
 }
 
+void WindowManager::raise_window(Window *win)
+{
+	if(!win) {
+		return;
+	}
+
+	Window *parent = win->get_parent();
+	if(parent != root_win) {
+		if(parent->get_parent() == root_win) {
+			win = parent;
+		}
+		else {
+			return;
+		}
+	}
+
+	root_win->remove_child(win);
+	root_win->add_child(win);
+}
+
+void WindowManager::sink_window(Window *win)
+{
+	if(!win) {
+		return;
+	}
+
+	std::list<Window*>::iterator it;
+	it = std::find(windows.begin(), windows.end(), win);
+	if(it != windows.end()) {
+		windows.erase(it);
+		windows.push_front(win);
+	}
+}
+
 static void display(Window *win)
 {
 	//frame display:
@@ -293,6 +327,7 @@ static void mouse(Window *win, int bn, bool pressed, int x, int y)
 	if(bn == 0) {
 		if(pressed) {
 			wm->grab_mouse(win);
+			wm->raise_window(win);
 			prev_x = x;
 			prev_y = y;
 		}
@@ -305,6 +340,8 @@ static void mouse(Window *win, int bn, bool pressed, int x, int y)
 static void motion(Window *win, int x, int y)
 {
 	int left_bn = get_button(0);
+	int right_button = get_button(2);
+
 	if(left_bn) {
 		int dx = x - prev_x;
 		int dy = y - prev_y;

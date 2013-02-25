@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <stdio.h> //TODO
 #include <string.h>
 
 #include "gfx.h"
@@ -90,10 +91,10 @@ void Window::invalidate()
 	wm->invalidate_region(abs_rect);
 }
 
-void Window::draw(const Rect &dirty_region)
+void Window::draw(Rect *dirty_region)
 {
 	Rect abs_rect = get_absolute_rect();
-	Rect intersect = rect_intersection(abs_rect, dirty_region);
+	Rect intersect = rect_intersection(abs_rect, *dirty_region);
 	if(intersect.width && intersect.height) {
 		if(callbacks.display) {
 			callbacks.display(this);
@@ -101,13 +102,15 @@ void Window::draw(const Rect &dirty_region)
 		dirty = false;
 
 		draw_children(abs_rect);
+		*dirty_region = rect_union(*dirty_region, abs_rect);
 	}
 }
 
 void Window::draw_children(const Rect &dirty_region)
 {
+	Rect drect = dirty_region;
 	for(size_t i=0; i<children.size(); i++) {
-		children[i]->draw(dirty_region);
+		children[i]->draw(&drect);
 	}
 }
 

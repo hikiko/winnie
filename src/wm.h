@@ -54,6 +54,9 @@ public:
 
 	void grab_mouse(Window *win);
 	void release_mouse();
+
+	void raise_window(Window *win);
+	void sink_window(Window *win);
 };
 
 extern WindowManager *wm;
