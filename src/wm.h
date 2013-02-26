@@ -44,6 +44,7 @@ public:
 	Window *get_focused_window();
 
 	Window *get_window_at_pos(int pointer_x, int pointer_y);
+	Window *get_root_window() const;
 
 	void set_focused_frame_color(int r, int g, int b);
 	void get_focused_frame_color(int *r, int *g, int *b);

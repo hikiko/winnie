@@ -102,6 +102,7 @@ void Window::draw(Rect *dirty_region)
 		dirty = false;
 
 		draw_children(abs_rect);
+
 		*dirty_region = rect_union(*dirty_region, abs_rect);
 	}
 }

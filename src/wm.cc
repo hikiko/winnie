@@ -221,17 +221,20 @@ Window *WindowManager::get_focused_window()
 
 Window *WindowManager::get_window_at_pos(int pointer_x, int pointer_y)
 {
-	std::list<Window*>::reverse_iterator rit = windows.rbegin();
-	while(rit != windows.rend()) {
-		Window *w = *rit++;
-		Window *parent = w->get_parent();
-
-		if(parent == root_win && w->contains_point(pointer_x, pointer_y)) {
-			return w;
+	Window *root_win = wm->get_root_window();
+	Window **children = root_win->get_children();
+	for(int i=root_win->get_children_count() - 1; i>=0; i--) {
+		if(children[i]->contains_point(pointer_x, pointer_y)) {
+			return children[i];
 		}
 	}
 
 	return 0;
+}
+
+Window *WindowManager::get_root_window() const
+{
+	return root_win;
 }
 
 void WindowManager::set_focused_frame_color(int r, int g, int b)
