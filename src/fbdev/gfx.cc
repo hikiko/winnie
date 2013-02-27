@@ -22,6 +22,8 @@ static int dev_fd = -1;
 static Rect screen_rect;
 static int color_depth; // bits per pixel
 
+static Pixmap *pixmap;
+
 bool init_gfx()
 {
 	if((dev_fd = open("/dev/fb0", O_RDWR)) == -1) {
@@ -56,18 +58,22 @@ bool init_gfx()
 	}
 
 // TODO: uncomment when I find how to use intelfb instead of i915 GRRRR.-	
-
-/*
 	fb_vblank vblank;
 	if(ioctl(dev_fd, FBIOGET_VBLANK, &vblank) == -1) {
-		fprintf(stderr, "FBIOGET_VBLANK error: %s\n", strerror(errno));
+//		fprintf(stderr, "FBIOGET_VBLANK error: %s\n", strerror(errno));
 	}
-	else {
+/*	
+ 	else {
 		printf("flags: %x\n", vblank.flags);
 		printf("count: %d\n", vblank.count);
 		printf("beam position: %d, %d\n", vblank.hcount, vblank.vcount);
 	}
 */
+
+	pixmap = new Pixmap;
+	pixmap->width = screen_rect.width;
+	pixmap->height = screen_rect.height;
+	pixmap->pixels = framebuffer;
 
 	return true;
 }
@@ -84,11 +90,18 @@ void destroy_gfx()
 
 	munmap(framebuffer, FRAMEBUFFER_SIZE(screen_rect.width, screen_rect.height, color_depth));
 	framebuffer = 0;
+
+	pixmap->pixels = 0;
 }
 
 unsigned char *get_framebuffer()
 {
 	return framebuffer;
+}
+
+Pixmap *get_framebuffer_pixmap()
+{
+	return pixmap;
 }
 
 Rect get_screen_size()

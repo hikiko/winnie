@@ -7,7 +7,7 @@ dbg = -g
 opt = -O0
 inc = -Isrc
 
-backend = SDL
+#backend = SDL
 
 ifeq ($(backend), SDL)
 	def = -DWINNIE_SDL

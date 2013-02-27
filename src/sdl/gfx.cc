@@ -25,10 +25,8 @@ bool init_gfx()
 	SDL_ShowCursor(0);
 
 	pixmap = new Pixmap;
-
 	pixmap->width = screen_rect.width;
 	pixmap->height = screen_rect.height;
-
 	pixmap->pixels = (unsigned char*)fbsurf->pixels;
 
 	return true;
