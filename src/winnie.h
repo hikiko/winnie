@@ -4,6 +4,7 @@
 #include "event.h"
 #include "geom.h"
 #include "gfx.h"
+#include "text.h"
 #include "window.h"
 #include "wm.h"
 

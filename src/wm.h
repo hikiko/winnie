@@ -47,9 +47,10 @@ public:
 	Window *get_root_window() const;
 
 	void set_focused_frame_color(int r, int g, int b);
-	void get_focused_frame_color(int *r, int *g, int *b);
+	void get_focused_frame_color(int *r, int *g, int *b) const;
 
 	void set_unfocused_frame_color(int r, int g, int b);
+	void get_unfocused_frame_color(int *r, int *g, int *b) const;
 
 	Window *get_grab_window() const;
 

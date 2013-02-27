@@ -9,6 +9,8 @@ static SDL_Surface *fbsurf;
 static Rect screen_rect = {0, 0, 1024, 768};
 static int color_depth = 32; // bits per pixel
 
+static Pixmap *pixmap;
+
 bool init_gfx()
 {
 	if(SDL_Init(SDL_INIT_VIDEO) == -1) {
@@ -22,17 +24,31 @@ bool init_gfx()
 	}
 	SDL_ShowCursor(0);
 
+	pixmap = new Pixmap;
+
+	pixmap->width = screen_rect.width;
+	pixmap->height = screen_rect.height;
+
+	pixmap->pixels = (unsigned char*)fbsurf->pixels;
+
 	return true;
 }
 
 void destroy_gfx()
 {
+	pixmap->pixels = 0;
+	delete pixmap;
 	SDL_Quit();
 }
 
 unsigned char *get_framebuffer()
 {
 	return (unsigned char*)fbsurf->pixels;
+}
+
+Pixmap *get_framebuffer_pixmap()
+{
+	return pixmap;
 }
 
 Rect get_screen_size()

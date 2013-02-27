@@ -20,7 +20,7 @@ int main()
 
 	Window *win1 = new Window;
 	win1->set_title("red");
-	win1->move(5, 10);
+	win1->move(200, 100);
 	win1->resize(200, 300);
 	win1->set_display_callback(display);
 	win1->set_keyboard_callback(keyboard);
@@ -29,7 +29,7 @@ int main()
 
 	Window *win2 = new Window;
 	win2->set_title("yellow");
-	win2->move(150, 10);
+	win2->move(300, 100);
 	win2->resize(200, 300);
 	win2->set_display_callback(display);
 	win2->set_keyboard_callback(keyboard);

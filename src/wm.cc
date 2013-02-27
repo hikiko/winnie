@@ -3,10 +3,11 @@
 #include <stdio.h>	// TODO
 
 #include "gfx.h"
-#include "wm.h"
-#include "window.h"
 #include "mouse.h"
 #include "mouse_cursor.h"
+#include "text.h"
+#include "wm.h"
+#include "window.h"
 
 WindowManager *wm;
 static WindowManager wminst;
@@ -80,8 +81,8 @@ WindowManager::WindowManager()
 	frame_thickness = 8;
 	titlebar_thickness = 16;
 
-	frame_fcolor[0] = frame_fcolor[1] = frame_fcolor[2] = 0;
-	frame_ucolor[0] = frame_ucolor[1] = frame_ucolor[2] = 255;
+	set_focused_frame_color(36, 59, 98);
+	set_unfocused_frame_color(80, 129, 162);
 
 	mouse_cursor.set_image(mouse_cursor_width, mouse_cursor_height);
 	unsigned char *pixels = mouse_cursor.get_image();
@@ -244,7 +245,7 @@ void WindowManager::set_focused_frame_color(int r, int g, int b)
 	frame_fcolor[2] = b;
 }
 
-void WindowManager::get_focused_frame_color(int *r, int *g, int *b)
+void WindowManager::get_focused_frame_color(int *r, int *g, int *b) const
 {
 	*r = frame_fcolor[0];
 	*g = frame_fcolor[1];
@@ -256,6 +257,13 @@ void WindowManager::set_unfocused_frame_color(int r, int g, int b)
 	frame_ucolor[0] = r;
 	frame_ucolor[1] = g;
 	frame_ucolor[2] = b;
+}
+
+void WindowManager::get_unfocused_frame_color(int *r, int *g, int *b) const
+{
+	*r = frame_ucolor[0];
+	*g = frame_ucolor[1];
+	*b = frame_ucolor[2];
 }
 
 Window *WindowManager::get_grab_window() const
@@ -310,17 +318,24 @@ void WindowManager::sink_window(Window *win)
 static void display(Window *win)
 {
 	//frame display:
-	Window **children = win->get_children();
-	for(int i=0; i<win->get_children_count(); i++) {
-		if(children[0] == wm->get_focused_window()) {
-			int r, g, b;
-			wm->get_focused_frame_color(&r, &g, &b);
-			fill_rect(win->get_absolute_rect(), r, g, b);
-			return;
-		}
+	Window *child = win->get_children()[0];
+	int r, g, b;
+	Rect abs_rect = win->get_absolute_rect();
+
+	//TODO 5 not hardcoded
+	set_text_position(abs_rect.x + 5, abs_rect.y + 15);
+	set_text_color(255, 255, 255);
+
+	if(child == wm->get_focused_window()) {
+		wm->get_focused_frame_color(&r, &g, &b);
+		fill_rect(abs_rect, r, g, b);
+	}
+	else {
+		wm->get_unfocused_frame_color(&r, &g, &b);
+		fill_rect(win->get_absolute_rect(), r, g, b);
 	}
 
-	fill_rect(win->get_absolute_rect(), 74, 175, 198);
+	draw_text(child->get_title());
 }
 
 static int prev_x, prev_y;

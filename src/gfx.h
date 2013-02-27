@@ -2,11 +2,14 @@
 #define GFX_H_
 
 #include "geom.h"
+#include "pixmap.h"
 
 bool init_gfx();
 void destroy_gfx();
 
 unsigned char *get_framebuffer();
+Pixmap *get_framebuffer_pixmap();
+
 Rect get_screen_size();
 int get_color_depth();
 

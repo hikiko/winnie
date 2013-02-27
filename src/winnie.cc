@@ -16,6 +16,10 @@ bool winnie_init()
 		return false;
 	}
 
+	if(!init_text()) {
+		return false;
+	}
+
 	wm->invalidate_region(get_screen_size());
 	return true;
 }

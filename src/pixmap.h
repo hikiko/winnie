@@ -4,11 +4,10 @@
 #include "geom.h"
 
 class Pixmap {
-private:
+public:
 	int width, height;
 	unsigned char *pixels;
 
-public:
 	Pixmap();
 	~Pixmap();
 
