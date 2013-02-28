@@ -96,14 +96,18 @@ void Window::draw(Rect *dirty_region)
 	Rect abs_rect = get_absolute_rect();
 	Rect intersect = rect_intersection(abs_rect, *dirty_region);
 	if(intersect.width && intersect.height) {
+		Rect prev_clip = get_clipping_rect();
+		set_clipping_rect(abs_rect);
+		
 		if(callbacks.display) {
 			callbacks.display(this);
 		}
 		dirty = false;
 
 		draw_children(abs_rect);
-
+		
 		*dirty_region = rect_union(*dirty_region, abs_rect);
+		set_clipping_rect(prev_clip);
 	}
 }
 

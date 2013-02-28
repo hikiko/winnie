@@ -13,6 +13,9 @@ Pixmap *get_framebuffer_pixmap();
 Rect get_screen_size();
 int get_color_depth();
 
+void set_clipping_rect(const Rect &clip_rect);
+const Rect &get_clipping_rect();
+
 void clear_screen(int r, int g, int b);
 void fill_rect(const Rect &rect, int r, int g, int b);
 

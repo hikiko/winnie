@@ -19,7 +19,7 @@ int main()
 	atexit(cleanup);
 
 	Window *win1 = new Window;
-	win1->set_title("red");
+	win1->set_title("red klqljljljljljjkaHDJKAHKSHDjkahHSKHDKJSHKAHSJKHAKSHCJHSKFHJKSDHJKSHDJKH");
 	win1->move(200, 100);
 	win1->resize(200, 300);
 	win1->set_display_callback(display);
@@ -46,17 +46,7 @@ int main()
 
 static void display(Window *win)
 {
-	const char *win_title = win->get_title();
-	const char *t1 = "red";
-	const char *t2 = "yellow";
-
-	if(!strcmp(win_title, t1)) {
-		fill_rect(win->get_absolute_rect(), 247, 68, 50);
-	}
-
-	if(!strcmp(win_title, t2)) {
-		fill_rect(win->get_absolute_rect(), 255, 215, 78);
-	}
+	fill_rect(win->get_absolute_rect(), 128, 128, 128);
 }
 
 static void keyboard(Window *win, int key, bool pressed)

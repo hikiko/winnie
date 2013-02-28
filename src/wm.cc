@@ -358,7 +358,6 @@ static void mouse(Window *win, int bn, bool pressed, int x, int y)
 static void motion(Window *win, int x, int y)
 {
 	int left_bn = get_button(0);
-	int right_button = get_button(2);
 
 	if(left_bn) {
 		int dx = x - prev_x;

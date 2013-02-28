@@ -75,15 +75,31 @@ static int draw_glyph(Pixmap *pixmap, int x, int y, char c)
 	unsigned char *bmp_ptr = ft_bmp->buffer;
 	unsigned char *pxm_ptr = pixmap->get_image() + (pixmap->get_width() * y + x) * 4;
 
+	Rect clipping_rect = get_clipping_rect();
+
 	for(int i=0; i<ft_bmp->rows; i++) {
-		for(int j=0; j<ft_bmp->width; j++) {
-			if(bmp_ptr[j]) {
-				int a = (int)bmp_ptr[j];
-				pxm_ptr[4 * j] = (a * text_color[0] + pxm_ptr[4 * j] * (255 - a)) / 255;
-				pxm_ptr[4 * j + 1] = (a * text_color[1] + pxm_ptr[4 * j + 1] * (255 - a)) / 255;
-				pxm_ptr[4 * j + 2] = (a * text_color[2] + pxm_ptr[4 * j + 2] * (255 - a)) / 255;
+		int dest_y = i + y;
+		if(dest_y >= clipping_rect.y + clipping_rect.height) {
+			break;
+		}
+
+		if(dest_y >= clipping_rect.y) {
+			for(int j=0; j<ft_bmp->width; j++) {
+				int dest_x = j + x;
+
+				if(dest_x >= clipping_rect.x + clipping_rect.width) {
+					break;
+				}
+
+				if(bmp_ptr[j] && dest_x >= clipping_rect.x) {
+					int a = (int)bmp_ptr[j];
+					pxm_ptr[4 * j] = (a * text_color[0] + pxm_ptr[4 * j] * (255 - a)) / 255;
+					pxm_ptr[4 * j + 1] = (a * text_color[1] + pxm_ptr[4 * j + 1] * (255 - a)) / 255;
+					pxm_ptr[4 * j + 2] = (a * text_color[2] + pxm_ptr[4 * j + 2] * (255 - a)) / 255;
+				}
 			}
 		}
+
 		pxm_ptr += 4 * pixmap->get_width();
 		bmp_ptr += ft_bmp->pitch;
 	}
