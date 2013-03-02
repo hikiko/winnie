@@ -19,7 +19,7 @@ int main()
 	atexit(cleanup);
 
 	Window *win1 = new Window;
-	win1->set_title("red klqljljljljljjkaHDJKAHKSHDjkahHSKHDKJSHKAHSJKHAKSHCJHSKFHJKSDHJKSHDJKH");
+	win1->set_title("Clipping the win title");
 	win1->move(200, 100);
 	win1->resize(200, 300);
 	win1->set_display_callback(display);
@@ -28,7 +28,7 @@ int main()
 	win1->set_mouse_motion_callback(motion);
 
 	Window *win2 = new Window;
-	win2->set_title("yellow");
+	win2->set_title("window 2");
 	win2->move(300, 100);
 	win2->resize(200, 300);
 	win2->set_display_callback(display);

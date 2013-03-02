@@ -81,8 +81,8 @@ WindowManager::WindowManager()
 	frame_thickness = 8;
 	titlebar_thickness = 16;
 
-	set_focused_frame_color(36, 59, 98);
-	set_unfocused_frame_color(80, 129, 162);
+	set_focused_frame_color(0, 0, 0);
+	set_unfocused_frame_color(200, 200, 200);
 
 	mouse_cursor.set_image(mouse_cursor_width, mouse_cursor_height);
 	unsigned char *pixels = mouse_cursor.get_image();
