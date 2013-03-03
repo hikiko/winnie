@@ -30,6 +30,10 @@ static Graphics *gfx;
 
 bool init_gfx()
 {
+	if(!(gfx = (Graphics*)malloc(sizeof *gfx))) {
+		return false;
+	}
+
 	gfx->dev_fd = -1;
 
 	if((gfx->dev_fd = open("/dev/fb0", O_RDWR)) == -1) {
@@ -42,10 +46,6 @@ bool init_gfx()
 		close(gfx->dev_fd);
 		gfx->dev_fd = -1;
 		fprintf(stderr, "Unable to get screen info : %s\n", strerror(errno));
-		return false;
-	}
-
-	if(!(gfx = (Graphics*)malloc(sizeof *gfx))) {
 		return false;
 	}
 

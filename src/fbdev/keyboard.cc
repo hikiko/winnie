@@ -13,19 +13,30 @@
 #include "window.h"
 #include "wm.h"
 
-static int dev_fd = -1;
-static enum {RAW, CANONICAL} ttystate = CANONICAL;
+struct Keyboard {
+	int dev_fd;
+	enum {RAW, CANONICAL} ttystate;
+};
+
+static Keyboard *keyboard;
 
 bool init_keyboard()
 {
-	if((dev_fd = open("/dev/tty", O_RDWR)) == -1) {
+	if(!(keyboard = (Keyboard*)malloc(sizeof *keyboard))) {
+		return false;
+	}
+
+	keyboard->ttystate = keyboard->CANONICAL;
+	keyboard->dev_fd = -1;
+
+	if((keyboard->dev_fd = open("/dev/tty", O_RDWR)) == -1) {
 		fprintf(stderr, "Cannot open /dev/tty : %s\n", strerror(errno));
 		return false;
 	}
 
 	struct termios buf;
 
-	if(tcgetattr(dev_fd, &buf) < 0) {
+	if(tcgetattr(keyboard->dev_fd, &buf) < 0) {
 		fprintf(stderr, "Cannot get the tty parameters : %s\n", strerror(errno));
 		return false;
 	}
@@ -36,11 +47,11 @@ bool init_keyboard()
 	buf.c_cflag |= CS8;
 	buf.c_oflag &= ~(OPOST);
 
-	if(tcsetattr(dev_fd, TCSAFLUSH, &buf) < 0) {
+	if(tcsetattr(keyboard->dev_fd, TCSAFLUSH, &buf) < 0) {
 		return false;
 	}
 
-	ttystate = RAW;
+	keyboard->ttystate = keyboard->RAW;
 	return true;
 }
 
@@ -48,7 +59,7 @@ void destroy_keyboard()
 {
 	struct termios buf;
 
-	if(tcgetattr(dev_fd, &buf) < 0) {
+	if(tcgetattr(keyboard->dev_fd, &buf) < 0) {
 		fprintf(stderr, "Cannot get the tty parameters : %s\n", strerror(errno));
 	}
 
@@ -58,27 +69,29 @@ void destroy_keyboard()
 	buf.c_cflag &= CS8;
 	buf.c_oflag |= (OPOST);
 
-	if(tcsetattr(dev_fd, TCSAFLUSH, &buf) < 0) {
+	if(tcsetattr(keyboard->dev_fd, TCSAFLUSH, &buf) < 0) {
 		fprintf(stderr, "Cannot set the tty parameters : %s\n", strerror(errno));
 	}
 
-	ttystate = CANONICAL;
+	keyboard->ttystate = keyboard->CANONICAL;
 
-	if(dev_fd != -1) {
-		close(dev_fd);
-		dev_fd = -1;
+	if(keyboard->dev_fd != -1) {
+		close(keyboard->dev_fd);
+		keyboard->dev_fd = -1;
 	}
+
+	free(keyboard);
 }
 
 int get_keyboard_fd()
 {
-	return dev_fd;
+	return keyboard->dev_fd;
 }
 
 void process_keyboard_event()
 {
 	char key;
-	if(read(dev_fd, &key, 1) < 1) {
+	if(read(keyboard->dev_fd, &key, 1) < 1) {
 		return;
 	}
 
