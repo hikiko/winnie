@@ -17,7 +17,7 @@ struct Text {
 	int text_color[3];
 };
 
-Text *text;
+static Text *text;
 
 bool init_text()
 {

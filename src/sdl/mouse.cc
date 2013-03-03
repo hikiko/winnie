@@ -7,16 +7,25 @@
 
 extern SDL_Event sdl_event;
 
-static int pointer_x, pointer_y;
-static int bnstate;
+struct Mouse {
+	int pointer_x;
+	int pointer_y;
+	int bnstate;
+};
+
+static Mouse *mouse;
 
 bool init_mouse()
 {
+	if(!(mouse = (Mouse*)malloc(sizeof *mouse))) {
+		return false;
+	}
 	return true;
 }
 
 void destroy_mouse()
 {
+	free(mouse);
 }
 
 void set_mouse_bounds(const Rect &rect)
@@ -36,7 +45,7 @@ void process_mouse_event()
 
 	Window *win;
 	if(!(win = wm->get_grab_window())) {
-		win = wm->get_window_at_pos(pointer_x, pointer_y);
+		win = wm->get_window_at_pos(mouse->pointer_x, mouse->pointer_y);
 		if(win) {
 			wm->set_focused_window(win);
 		}
@@ -47,11 +56,11 @@ void process_mouse_event()
 
 	switch(sdl_event.type) {
 	case SDL_MOUSEMOTION:
-		pointer_x = sdl_event.motion.x;
-		pointer_y = sdl_event.motion.y;
+		mouse->pointer_x = sdl_event.motion.x;
+		mouse->pointer_y = sdl_event.motion.y;
 		if(win && (motion_callback = win->get_mouse_motion_callback())) {
 			Rect rect = win->get_absolute_rect();
-			motion_callback(win, pointer_x - rect.x, pointer_y - rect.y);
+			motion_callback(win, mouse->pointer_x - rect.x, mouse->pointer_y - rect.y);
 		}
 		break;
 
@@ -59,27 +68,27 @@ void process_mouse_event()
 	case SDL_MOUSEBUTTONDOWN:
 		bn = sdl_event.button.button - SDL_BUTTON_LEFT;
 		if(sdl_event.button.state == SDL_PRESSED) {
-			bnstate |= 1 << bn;
+			mouse->bnstate |= 1 << bn;
 		}
 		else {
-			bnstate &= ~(1 << bn);
+			mouse->bnstate &= ~(1 << bn);
 		}
 		if(win && (button_callback = win->get_mouse_button_callback())) {
 			Rect rect = win->get_absolute_rect();
-			button_callback(win, bn, sdl_event.button.state, pointer_x - rect.x, pointer_y - rect.y);
+			button_callback(win, bn, sdl_event.button.state, mouse->pointer_x - rect.x, mouse->pointer_y - rect.y);
 		}
 	}
 }
 
 void get_pointer_pos(int *x, int *y)
 {
-	*x = pointer_x;
-	*y = pointer_y;
+	*x = mouse->pointer_x;
+	*y = mouse->pointer_y;
 }
 
 int get_button_state()
 {
-	return bnstate;
+	return mouse->bnstate;
 }
 
 int get_button(int bn)
@@ -87,6 +96,6 @@ int get_button(int bn)
 	if(bn < 0 || bn >= 3) {
 		return 0;
 	}
-	return (bnstate & (1 << bn)) != 0;
+	return (mouse->bnstate & (1 << bn)) != 0;
 }
 #endif // WINNIE_SDL
