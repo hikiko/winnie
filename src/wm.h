@@ -8,6 +8,9 @@
 
 class Window;
 
+bool init_window_manager();
+void destroy_window_manager(); 
+
 class WindowManager {
 private:
 	std::list<Window*> windows;

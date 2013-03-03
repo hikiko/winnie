@@ -10,11 +10,24 @@
 #include "window.h"
 
 WindowManager *wm;
-static WindowManager wminst;
 
 static void display(Window *win);
 static void mouse(Window *win, int bn, bool pressed, int x, int y);
 static void motion(Window *win, int x, int y);
+
+bool init_window_manager()
+{
+	if(!(wm = new WindowManager)) {
+		return false;
+	}
+
+	return true;
+}
+
+void destroy_window_manager()
+{
+	delete wm;
+}
 
 void WindowManager::create_frame(Window *win)
 {
@@ -72,6 +85,7 @@ WindowManager::WindowManager()
 	root_win->move(0, 0);
 	root_win->set_managed(false);
 
+	grab_win = 0;
 	focused_win = 0;
 
 	bg_color[0] = 210;

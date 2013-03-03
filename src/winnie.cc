@@ -8,6 +8,10 @@ bool winnie_init()
 		return false;
 	}
 
+	if(!init_window_manager()) {
+		return false;
+	}
+
 	if(!init_keyboard()) {
 		return false;
 	}

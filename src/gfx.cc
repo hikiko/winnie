@@ -3,18 +3,6 @@
 #include "geom.h"
 #include "gfx.h"
 
-static Rect clipping_rect;
-
-void set_clipping_rect(const Rect &rect)
-{
-	clipping_rect = rect_intersection(rect, get_screen_size());
-}
-
-const Rect &get_clipping_rect()
-{
-	return clipping_rect;
-}
-
 void clear_screen(int r, int g, int b)
 {
 	Rect screen_rect = get_screen_size();
@@ -25,6 +13,7 @@ void fill_rect(const Rect &rect, int r, int g, int b)
 {
 	Rect drect = rect;
 	Rect screen_rect = get_screen_size();
+	Rect clipping_rect = get_clipping_rect();
 
 	if(drect.x < clipping_rect.x) {
 		drect.width -= clipping_rect.x - drect.x;
