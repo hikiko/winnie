@@ -10,6 +10,7 @@
 #include <unistd.h>
 
 #include "keyboard.h"
+#include "shalloc.h"
 #include "window.h"
 #include "wm.h"
 
@@ -22,7 +23,7 @@ static Keyboard *keyboard;
 
 bool init_keyboard()
 {
-	if(!(keyboard = (Keyboard*)malloc(sizeof *keyboard))) {
+	if(!(keyboard = (Keyboard*)sh_malloc(sizeof *keyboard))) {
 		return false;
 	}
 
@@ -80,7 +81,7 @@ void destroy_keyboard()
 		keyboard->dev_fd = -1;
 	}
 
-	free(keyboard);
+	sh_free(keyboard);
 }
 
 int get_keyboard_fd()

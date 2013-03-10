@@ -1,9 +1,14 @@
-#include "winnie.h"
 #include "keyboard.h"
 #include "mouse.h"
+#include "shalloc.h"
+#include "winnie.h"
 
 bool winnie_init()
 {
+	if(!init_shared_memory()) {
+		return false;
+	}
+
 	if(!init_gfx()) {
 		return false;
 	}
@@ -33,4 +38,7 @@ void winnie_shutdown()
 	destroy_gfx();
 	destroy_keyboard();
 	destroy_mouse();
+	destroy_text();
+
+	destroy_shared_memory();
 }

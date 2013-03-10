@@ -13,6 +13,7 @@
 #include "geom.h"
 #include "gfx.h"
 #include "mouse.h"
+#include "shalloc.h"
 #include "window.h"
 #include "wm.h"
 
@@ -34,7 +35,7 @@ static Mouse *mouse;
 
 bool init_mouse()
 {
-	if(!(mouse = (Mouse*)malloc(sizeof *mouse))) {
+	if(!(mouse = (Mouse*)sh_malloc(sizeof *mouse))) {
 		return false;
 	}
 
@@ -55,7 +56,7 @@ void destroy_mouse()
 		close(mouse->dev_fd);
 		mouse->dev_fd = -1;
 	}
-	free(mouse);
+	sh_free(mouse);
 }
 
 void set_mouse_bounds(const Rect &rect)

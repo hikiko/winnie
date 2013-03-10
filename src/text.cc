@@ -2,6 +2,7 @@
 #include <freetype/freetype.h>
 
 #include "gfx.h"
+#include "shalloc.h"
 #include "text.h"
 
 #define DPI 72
@@ -21,7 +22,7 @@ static Text *text;
 
 bool init_text()
 {
-	if(!(text = (Text*)malloc(sizeof *text))) {
+	if(!(text = (Text*)sh_malloc(sizeof *text))) {
 		return false;
 	}
 
@@ -43,6 +44,11 @@ bool init_text()
 	set_text_color(255, 255, 255);
 
 	return true;
+}
+
+void destroy_text()
+{
+	sh_free(text);
 }
 
 void draw_text(const char *txt, Pixmap *pixmap)

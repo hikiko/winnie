@@ -2,6 +2,7 @@
 #include <SDL/SDL.h>
 
 #include "mouse.h"
+#include "shalloc.h"
 #include "window.h"
 #include "wm.h"
 
@@ -17,7 +18,7 @@ static Mouse *mouse;
 
 bool init_mouse()
 {
-	if(!(mouse = (Mouse*)malloc(sizeof *mouse))) {
+	if(!(mouse = (Mouse*)sh_malloc(sizeof *mouse))) {
 		return false;
 	}
 	return true;
@@ -25,7 +26,7 @@ bool init_mouse()
 
 void destroy_mouse()
 {
-	free(mouse);
+	sh_free(mouse);
 }
 
 void set_mouse_bounds(const Rect &rect)

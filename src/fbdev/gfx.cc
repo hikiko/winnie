@@ -14,12 +14,14 @@
 #include <linux/fb.h>
 
 #include "gfx.h"
+#include "shalloc.h"
 
 #define FRAMEBUFFER_SIZE(xsz, ysz, bpp) ((xsz) * (ysz) * (bpp) / CHAR_BIT)
 
+static unsigned char *framebuffer;
+static int dev_fd;
+
 struct Graphics {
-	unsigned char *framebuffer;
-	int dev_fd;
 	Rect screen_rect;
 	Rect clipping_rect;
 	int color_depth;
@@ -30,21 +32,21 @@ static Graphics *gfx;
 
 bool init_gfx()
 {
-	if(!(gfx = (Graphics*)malloc(sizeof *gfx))) {
+	if(!(gfx = (Graphics*)sh_malloc(sizeof *gfx))) {
 		return false;
 	}
 
-	gfx->dev_fd = -1;
+	dev_fd = -1;
 
-	if((gfx->dev_fd = open("/dev/fb0", O_RDWR)) == -1) {
+	if((dev_fd = open("/dev/fb0", O_RDWR)) == -1) {
 		fprintf(stderr, "Cannot open /dev/fb0 : %s\n", strerror(errno));
 		return false;
 	}
 
 	fb_var_screeninfo sinfo;
-	if(ioctl(gfx->dev_fd, FBIOGET_VSCREENINFO, &sinfo) == -1) {
-		close(gfx->dev_fd);
-		gfx->dev_fd = -1;
+	if(ioctl(dev_fd, FBIOGET_VSCREENINFO, &sinfo) == -1) {
+		close(dev_fd);
+		dev_fd = -1;
 		fprintf(stderr, "Unable to get screen info : %s\n", strerror(errno));
 		return false;
 	}
@@ -60,18 +62,18 @@ bool init_gfx()
 	set_clipping_rect(gfx->screen_rect);
 
 	int sz = FRAMEBUFFER_SIZE(gfx->screen_rect.width, gfx->screen_rect.height, gfx->color_depth);
-	gfx->framebuffer = (unsigned char*)mmap(0, sz, PROT_READ | PROT_WRITE, MAP_SHARED, gfx->dev_fd, 0);
+	framebuffer = (unsigned char*)mmap(0, sz, PROT_READ | PROT_WRITE, MAP_SHARED, dev_fd, 0);
 
-	if(gfx->framebuffer == (void*)-1) {
-		close(gfx->dev_fd);
-		gfx->dev_fd = -1;
+	if(framebuffer == (void*)-1) {
+		close(dev_fd);
+		dev_fd = -1;
 		fprintf(stderr, "Cannot map the framebuffer to memory : %s\n", strerror(errno));
 		return false;
 	}
 
 // TODO: uncomment when I find how to use intelfb instead of i915 GRRRR.-	
 	fb_vblank vblank;
-	if(ioctl(gfx->dev_fd, FBIOGET_VBLANK, &vblank) == -1) {
+	if(ioctl(dev_fd, FBIOGET_VBLANK, &vblank) == -1) {
 //		fprintf(stderr, "FBIOGET_VBLANK error: %s\n", strerror(errno));
 	}
 /*	
@@ -82,10 +84,19 @@ bool init_gfx()
 	}
 */
 
-	gfx->pixmap = new Pixmap;
+	if(!(gfx->pixmap = (Pixmap*)sh_malloc(sizeof(Pixmap)))) {
+		fprintf(stderr, "Failed to allocate pixmap.\n");
+		return false;
+	}
+
 	gfx->pixmap->width = gfx->screen_rect.width;
 	gfx->pixmap->height = gfx->screen_rect.height;
-	gfx->pixmap->pixels = gfx->framebuffer;
+
+	int fbsize = gfx->pixmap->width * gfx->pixmap->height * gfx->color_depth / 8;
+	if(!(gfx->pixmap->pixels = (unsigned char*)sh_malloc(fbsize))) {
+		fprintf(stderr, "failed to allocate the pixmap framebuffer.\n");
+		return false;
+	}
 
 	return true;
 }
@@ -94,23 +105,24 @@ void destroy_gfx()
 {
 	clear_screen(0, 0, 0);
 
-	if(gfx->dev_fd != -1) {
-		close(gfx->dev_fd);
+	if(dev_fd != -1) {
+		close(dev_fd);
 	}
 
-	gfx->dev_fd = -1;
+	dev_fd = -1;
 
-	munmap(gfx->framebuffer, FRAMEBUFFER_SIZE(gfx->screen_rect.width, gfx->screen_rect.height, gfx->color_depth));
-	gfx->framebuffer = 0;
+	munmap(framebuffer, FRAMEBUFFER_SIZE(gfx->screen_rect.width, gfx->screen_rect.height, gfx->color_depth));
+	framebuffer = 0;
 
+	sh_free(gfx->pixmap->pixels);
 	gfx->pixmap->pixels = 0;
-
-	free(gfx);
+	sh_free(gfx->pixmap);
+	sh_free(gfx);
 }
 
 unsigned char *get_framebuffer()
 {
-	return gfx->framebuffer;
+	return gfx->pixmap->pixels;
 }
 
 Pixmap *get_framebuffer_pixmap()
@@ -143,19 +155,20 @@ void set_cursor_visibility(bool visible)
 	fb_cursor curs;
 	curs.enable = visible ? 1 : 0;
 
-	if(ioctl(gfx->dev_fd, FBIO_CURSOR, &curs) == -1) {
+	if(ioctl(dev_fd, FBIO_CURSOR, &curs) == -1) {
 		fprintf(stderr, "Cannot toggle cursor visibility : %s\n", strerror(errno));
 	}
 }
 
 void gfx_update()
 {
+	memcpy(framebuffer, gfx->pixmap->pixels, gfx->pixmap->width * gfx->pixmap->height * (gfx->color_depth / 8));
 }
 
 void wait_vsync()
 {
 	unsigned long arg = 0;
-	if(ioctl(gfx->dev_fd, FBIO_WAITFORVSYNC, &arg) == -1) {
+	if(ioctl(dev_fd, FBIO_WAITFORVSYNC, &arg) == -1) {
 //		printf("ioctl error %s\n", strerror(errno));
 	}
 }

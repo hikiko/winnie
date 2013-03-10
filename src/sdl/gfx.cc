@@ -2,10 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL/SDL.h>
+
 #include "gfx.h"
+#include "shalloc.h"
+
+static SDL_Surface *fbsurf;
 
 struct Graphics {
-	SDL_Surface *fbsurf;
 	Rect screen_rect;
 	Rect clipping_rect;
 	int color_depth; // bits per pixel
@@ -21,7 +24,7 @@ bool init_gfx()
 		return false;
 	}
 
-	if(!(gfx = (Graphics*)malloc(sizeof *gfx))) {
+	if(!(gfx = (Graphics*)sh_malloc(sizeof *gfx))) {
 		return false;
 	}
 
@@ -29,16 +32,25 @@ bool init_gfx()
 	gfx->screen_rect = scr_rect;
 	gfx->color_depth = 32;
 
-	if(!(gfx->fbsurf = SDL_SetVideoMode(gfx->screen_rect.width, gfx->screen_rect.height, gfx->color_depth, 0))) {
-		fprintf(stderr, "failed to set video mode\n");
+	if(!(fbsurf = SDL_SetVideoMode(gfx->screen_rect.width, gfx->screen_rect.height, gfx->color_depth, 0))) {
+		fprintf(stderr, "Failed to set video mode\n");
 		return false;
 	}
 	SDL_ShowCursor(0);
 
-	gfx->pixmap = new Pixmap;
+	if(!(gfx->pixmap = (Pixmap*)sh_malloc(sizeof(Pixmap)))) {
+		fprintf(stderr, "Failed to allocate pixmap.\n");
+		return false;
+	}
+
 	gfx->pixmap->width = gfx->screen_rect.width;
 	gfx->pixmap->height = gfx->screen_rect.height;
-	gfx->pixmap->pixels = (unsigned char*)gfx->fbsurf->pixels;
+
+	int fbsize = gfx->pixmap->width * gfx->pixmap->height * gfx->color_depth / 8;
+	if(!(gfx->pixmap->pixels = (unsigned char*)sh_malloc(fbsize))) {
+		fprintf(stderr, "failed to allocate the pixmap framebuffer.\n");
+		return false;
+	}
 
 	set_clipping_rect(gfx->screen_rect);
 
@@ -47,15 +59,16 @@ bool init_gfx()
 
 void destroy_gfx()
 {
+	sh_free(gfx->pixmap->pixels);
 	gfx->pixmap->pixels = 0;
-	delete gfx->pixmap;
-	free(gfx);
+	sh_free(gfx->pixmap);
+	sh_free(gfx);
 	SDL_Quit();
 }
 
 unsigned char *get_framebuffer()
 {
-	return (unsigned char*)gfx->fbsurf->pixels;
+	return gfx->pixmap->pixels;
 }
 
 Pixmap *get_framebuffer_pixmap()
@@ -116,7 +129,7 @@ int get_color_depth()
 t.width;
 	sdl_rect.h = gfx->clipping_rect.height;
 
-	SDL_SetClipRect(gfx->fbsurf, &sdl_rect);
+	SDL_SetClipRect(fbsurf, &sdl_rect);
 }
 
 const Rect &get_clipping_rect()
@@ -139,7 +152,7 @@ void fill_rect(const Rect &rect, int r, int g, int b)
 	sdl_rect.w = rect.width;
 	sdl_rect.h = rect.height;
 
-	SDL_FillRect(gfx->fbsurf, &sdl_rect, color);
+	SDL_FillRect(fbsurf, &sdl_rect, color);
 }*/
 
 void set_clipping_rect(const Rect &rect)
@@ -159,7 +172,14 @@ void set_cursor_visibility(bool visible)
 
 void gfx_update()
 {
-	SDL_UpdateRect(gfx->fbsurf, 0, 0, 0, 0);
+	if(SDL_MUSTLOCK(fbsurf)) {
+		SDL_LockSurface(fbsurf);
+	}
+	memcpy(fbsurf->pixels, gfx->pixmap->pixels, gfx->pixmap->width * gfx->pixmap->height * (gfx->color_depth / 8));
+	if(SDL_MUSTLOCK(fbsurf)) {
+		SDL_UnlockSurface(fbsurf);
+	}
+	SDL_UpdateRect(fbsurf, 0, 0, 0, 0);
 }
 
 void wait_vsync()
