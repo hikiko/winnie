@@ -104,6 +104,7 @@ bool init_gfx()
 void destroy_gfx()
 {
 	clear_screen(0, 0, 0);
+	gfx_update();
 
 	if(dev_fd != -1) {
 		close(dev_fd);
