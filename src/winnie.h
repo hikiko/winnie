@@ -11,4 +11,6 @@
 bool winnie_init();
 void winnie_shutdown();
 
+long winnie_get_time();
+
 #endif

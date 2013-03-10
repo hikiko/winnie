@@ -62,6 +62,9 @@ public:
 
 	void raise_window(Window *win);
 	void sink_window(Window *win);
+
+	void maximize_window(Window *win);
+	void unmaximize_window(Window *win);
 };
 
 extern WindowManager *wm;

@@ -7,9 +7,16 @@
 #include "event.h"
 
 class Window {
+public:
+	enum State {STATE_NORMAL, STATE_MINIMIZED, STATE_MAXIMIZED, STATE_SHADED};
+
 private:
 	char *title;
+	State state;
+
 	Rect rect;
+	Rect normal_rect; // normal state rectangle managed by the wm
+
 	Callbacks callbacks;
 
 	std::vector<Window*> children;
@@ -71,6 +78,9 @@ public:
 
 	const Window *get_parent() const;
 	Window *get_parent();
+
+	void set_state(State state);
+	State get_state() const;
 
 	// XXX remove if not needed
 	friend class WindowManager;

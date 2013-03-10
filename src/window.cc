@@ -16,6 +16,7 @@ Window::Window()
 	dirty = true;
 	managed = true;
 	focusable = true;
+	state = STATE_NORMAL;
 }
 
 Window::~Window()
@@ -236,4 +237,14 @@ const Window *Window::get_parent() const
 Window *Window::get_parent()
 {
 	return parent;
+}
+
+void Window::set_state(State state)
+{
+	this->state = state;
+}
+
+Window::State Window::get_state() const
+{
+	return state;
 }

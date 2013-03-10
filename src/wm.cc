@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <limits.h>
 #include <stdexcept>
 #include <stdio.h>	// TODO
 
@@ -8,6 +9,9 @@
 #include "text.h"
 #include "wm.h"
 #include "window.h"
+#include "winnie.h"
+
+#define DCLICK_INTERVAL 400
 
 WindowManager *wm;
 
@@ -329,6 +333,45 @@ void WindowManager::sink_window(Window *win)
 	}
 }
 
+void WindowManager::maximize_window(Window *win)
+{
+	win->normal_rect = win->rect;
+	
+	Rect rect = get_screen_size();
+
+	Window *frame;
+	if((frame = win->get_parent())) {
+		frame->normal_rect = frame->rect;
+		frame->resize(rect.width, rect.height);
+		frame->move(rect.x, rect.y);
+
+		rect.width -= frame_thickness * 2;
+		rect.height -= frame_thickness * 2 + titlebar_thickness;
+	}
+	else {
+		rect.x = 0;
+		rect.y = 0;
+		win->move(rect.x, rect.y);
+	}
+
+	win->resize(rect.width, rect.height);
+	win->set_state(Window::STATE_MAXIMIZED);
+}
+
+void WindowManager::unmaximize_window(Window *win)
+{
+	win->resize(win->normal_rect.width, win->normal_rect.height);
+	win->move(win->normal_rect.x, win->normal_rect.y);
+
+	Window *frame;
+	if((frame = win->get_parent())) {
+		frame->resize(frame->normal_rect.width, frame->normal_rect.height);
+		frame->move(frame->normal_rect.x, frame->normal_rect.y);
+	}
+
+	win->set_state(Window::STATE_NORMAL);
+}
+
 static void display(Window *win)
 {
 	//frame display:
@@ -356,12 +399,29 @@ static int prev_x, prev_y;
 
 static void mouse(Window *win, int bn, bool pressed, int x, int y)
 {
+	static long last_click = 0;
+
 	if(bn == 0) {
 		if(pressed) {
+			long time = winnie_get_time();
+			if((time - last_click) < DCLICK_INTERVAL) {
+				Window *child = win->get_children()[0];
+				Window::State state = child->get_state();
+				if(state == Window::STATE_MAXIMIZED) {
+					child->set_state(Window::STATE_NORMAL);
+					wm->unmaximize_window(child);
+				}
+				else if(state == Window::STATE_NORMAL) {
+					wm->maximize_window(child);
+				}
+			}
+
 			wm->grab_mouse(win);
 			wm->raise_window(win);
 			prev_x = x;
 			prev_y = y;
+
+			last_click = time;
 		}
 		else {
 			wm->release_mouse();

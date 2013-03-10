@@ -1,3 +1,5 @@
+#include <sys/time.h>
+
 #include "keyboard.h"
 #include "mouse.h"
 #include "shalloc.h"
@@ -41,4 +43,19 @@ void winnie_shutdown()
 	destroy_text();
 
 	destroy_shared_memory();
+}
+
+long winnie_get_time()
+{
+	static struct timeval init_tv;
+	struct timeval tv;
+
+	gettimeofday(&tv, 0);
+
+	if(!tv.tv_sec && !tv.tv_usec) {
+		init_tv = tv;
+		return 0;
+	}
+
+	return (tv.tv_usec - init_tv.tv_usec) / 1000 + (tv.tv_sec - init_tv.tv_sec) * 1000;
 }
