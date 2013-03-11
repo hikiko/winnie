@@ -20,6 +20,7 @@
 
 static unsigned char *framebuffer;
 static int dev_fd;
+static int rgb_order[3];
 
 struct Graphics {
 	Rect screen_rect;
@@ -58,6 +59,10 @@ bool init_gfx()
 	gfx->screen_rect.width = sinfo.xres_virtual;
 	gfx->screen_rect.height = sinfo.yres_virtual;
 	gfx->color_depth = sinfo.bits_per_pixel;
+
+	rgb_order[0] = sinfo.red.offset / 8;
+	rgb_order[1] = sinfo.green.offset / 8;
+	rgb_order[2] = sinfo.blue.offset / 8;
 
 	set_clipping_rect(gfx->screen_rect);
 
@@ -104,7 +109,7 @@ bool init_gfx()
 void destroy_gfx()
 {
 	clear_screen(0, 0, 0);
-	gfx_update();
+	gfx_update(gfx->screen_rect);
 
 	if(dev_fd != -1) {
 		close(dev_fd);
@@ -161,9 +166,17 @@ void set_cursor_visibility(bool visible)
 	}
 }
 
-void gfx_update()
+void gfx_update(const Rect &upd_rect)
 {
-	memcpy(framebuffer, gfx->pixmap->pixels, gfx->pixmap->width * gfx->pixmap->height * (gfx->color_depth / 8));
+	Rect rect = rect_intersection(upd_rect, gfx->screen_rect);
+	unsigned char *sptr = gfx->pixmap->pixels + (rect.y * gfx->screen_rect.width + rect.x) * 4;
+	unsigned char *dptr = framebuffer + (rect.y * gfx->screen_rect.width + rect.x) * 4;
+
+	for(int i=0; i<rect.height; i++) {
+		memcpy(dptr, sptr, rect.width * 4);
+		sptr += gfx->screen_rect.width * 4;
+		dptr += gfx->screen_rect.width * 4;
+	}
 }
 
 void wait_vsync()
@@ -172,6 +185,13 @@ void wait_vsync()
 	if(ioctl(dev_fd, FBIO_WAITFORVSYNC, &arg) == -1) {
 //		printf("ioctl error %s\n", strerror(errno));
 	}
+}
+
+void get_rgb_order(int *r, int *g, int *b)
+{
+	*r = rgb_order[0];
+	*g = rgb_order[1];
+	*b = rgb_order[2];
 }
 
 #endif // WINNIE_FBDEV

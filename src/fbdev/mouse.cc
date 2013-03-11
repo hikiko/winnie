@@ -38,6 +38,7 @@ bool init_mouse()
 	if(!(mouse = (Mouse*)sh_malloc(sizeof *mouse))) {
 		return false;
 	}
+	memset(mouse, 0, sizeof *mouse);
 
 	mouse->dev_fd = -1;
 

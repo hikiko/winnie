@@ -28,7 +28,7 @@ bool init_gfx()
 		return false;
 	}
 
-	Rect scr_rect = {0, 0, 1024, 768};
+	Rect scr_rect(0, 0, 1024, 768);
 	gfx->screen_rect = scr_rect;
 	gfx->color_depth = 32;
 
@@ -86,75 +86,6 @@ int get_color_depth()
 	return gfx->color_depth;
 }
 
-/*void set_clipping_rect(const Rect &rect)
-{
-	gfx->clipping_rect = rect_intersection(rect, gfx->screen_rect);
-
-	SDL_Rect sdl_rect;
-	sdl_rect.x = gfx->clipping_rect.x;
-	sdl_rect.y = gfx->clipping_rect.y;
-	sdl_rect.w = gfx->clipping_recvoid fill_rect(const Rect &rect, int r, int g, int b)
-{
-	Rect drect = rect;
-	Rect screen_rect = get_screen_size();
-
-	if(drect.x < clipping_rect.x) {
-		drect.width -= clipping_rect.x - drect.x;
-		drect.x = clipping_rect.x;
-	}
-
-	if(drect.y < clipping_rect.y) {
-		drect.height -= clipping_rect.y - drect.y;
-		drect.y = clipping_rect.y;
-	}
-
-	if(drect.x + drect.width >= clipping_rect.x + clipping_rect.width) {
-		drect.width = clipping_rect.width + clipping_rect.x - drect.x;
-	}
-
-	if(drect.y + drect.height >= clipping_rect.y + clipping_rect.height) {
-		drect.height = clipping_rect.height + clipping_rect.y - drect.y;
-	}
-
-	unsigned char *fb = get_framebuffer() + (drect.x + screen_rect.width * drect.y) * 4;
-	for(int i=0; i<drect.height; i++) {
-		for(int j=0; j<drect.width; j++) {
-			fb[j * 4] = b;
-			fb[j * 4 + 1] = g;
-			fb[j * 4 + 2] = r;
-		}
-		fb += screen_rect.width * 4;
-	}
-}
-t.width;
-	sdl_rect.h = gfx->clipping_rect.height;
-
-	SDL_SetClipRect(fbsurf, &sdl_rect);
-}
-
-const Rect &get_clipping_rect()
-{
-	return gfx->clipping_rect;
-}
-
-void clear_screen(int r, int g, int b)
-{
-	fill_rect(gfx->screen_rect, r, g, b);
-}
-
-void fill_rect(const Rect &rect, int r, int g, int b)
-{
-	uint32_t color = ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff);
-	
-	SDL_Rect sdl_rect;
-	sdl_rect.x = rect.x;
-	sdl_rect.y = rect.y;
-	sdl_rect.w = rect.width;
-	sdl_rect.h = rect.height;
-
-	SDL_FillRect(fbsurf, &sdl_rect, color);
-}*/
-
 void set_clipping_rect(const Rect &rect)
 {
 	gfx->clipping_rect = rect_intersection(rect, get_screen_size());
@@ -170,20 +101,38 @@ void set_cursor_visibility(bool visible)
 {
 }
 
-void gfx_update()
+void gfx_update(const Rect &upd_rect)
 {
 	if(SDL_MUSTLOCK(fbsurf)) {
 		SDL_LockSurface(fbsurf);
 	}
-	memcpy(fbsurf->pixels, gfx->pixmap->pixels, gfx->pixmap->width * gfx->pixmap->height * (gfx->color_depth / 8));
+
+	Rect rect = rect_intersection(upd_rect, gfx->screen_rect);
+
+	unsigned char *sptr = gfx->pixmap->pixels + (rect.y * gfx->screen_rect.width + rect.x) * 4;
+	unsigned char *dptr = (unsigned char*)fbsurf->pixels + (rect.y * gfx->screen_rect.width + rect.x) * 4;
+
+	for(int i=0; i<rect.height; i++) {
+		memcpy(dptr, sptr, rect.width * 4);
+		sptr += gfx->screen_rect.width * 4;
+		dptr += gfx->screen_rect.width * 4;
+	}
+
 	if(SDL_MUSTLOCK(fbsurf)) {
 		SDL_UnlockSurface(fbsurf);
 	}
-	SDL_UpdateRect(fbsurf, 0, 0, 0, 0);
+	SDL_UpdateRect(fbsurf, rect.x, rect.y, rect.width, rect.height);
 }
 
 void wait_vsync()
 {
+}
+
+void get_rgb_order(int *r, int *g, int *b)
+{
+	*r = fbsurf->format->Rshift / 8;
+	*g = fbsurf->format->Gshift / 8;
+	*b = fbsurf->format->Bshift / 8;
 }
 
 #endif // WINNIE_SDL

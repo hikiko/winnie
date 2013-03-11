@@ -1,5 +1,18 @@
 #include "geom.h"
 
+Rect::Rect()
+{
+	x = y = width = height = 0;
+}
+
+Rect::Rect(int x, int y, int w, int h)
+{
+	this->x = x;
+	this->y = y;
+	width = w;
+	height = h;
+}
+
 static inline int min(int x, int y)
 {
 	return x < y ? x : y;

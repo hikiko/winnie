@@ -91,6 +91,7 @@ WindowManager::WindowManager()
 
 	grab_win = 0;
 	focused_win = 0;
+	background = 0;
 
 	bg_color[0] = 210;
 	bg_color[1] = 106;
@@ -141,7 +142,13 @@ void WindowManager::process_windows()
 
 	wait_vsync();
 
-	fill_rect(uni, bg_color[0], bg_color[1], bg_color[2]);
+	if(!background) {
+		fill_rect(uni, bg_color[0], bg_color[1], bg_color[2]);
+	}
+	else {
+		blit(background->pixels, Rect(0, 0, background->width, background->height),
+				get_framebuffer(), get_screen_size(), 0, 0);
+	}
 
 	root_win->draw_children(uni);
 
@@ -153,10 +160,10 @@ void WindowManager::process_windows()
 			get_framebuffer(), get_screen_size(), mouse_x, mouse_y,
 			0, 0, 0);
 
-	Rect mouse_rect = {mouse_x, mouse_y, mouse_cursor.get_width(), mouse_cursor.get_height()};
+	Rect mouse_rect(mouse_x, mouse_y, mouse_cursor.get_width(), mouse_cursor.get_height());
 	invalidate_region(mouse_rect);
 
-	gfx_update();
+	gfx_update(uni);
 }
 
 void WindowManager::add_window(Window *win)
@@ -284,6 +291,25 @@ void WindowManager::get_unfocused_frame_color(int *r, int *g, int *b) const
 	*b = frame_ucolor[2];
 }
 
+void WindowManager::set_background(const Pixmap *pixmap)
+{
+	if(background) {
+		delete background;
+	}
+
+	if(pixmap) {
+		background = new Pixmap(*pixmap);
+	}
+	else {
+		background = 0;
+	}
+}
+
+const Pixmap *WindowManager::get_background() const
+{
+	return background;
+}
+
 Window *WindowManager::get_grab_window() const
 {
 	return grab_win;
@@ -349,9 +375,7 @@ void WindowManager::maximize_window(Window *win)
 		rect.height -= frame_thickness * 2 + titlebar_thickness;
 	}
 	else {
-		rect.x = 0;
-		rect.y = 0;
-		win->move(rect.x, rect.y);
+		win->move(0, 0);
 	}
 
 	win->resize(rect.width, rect.height);
@@ -402,28 +426,26 @@ static void mouse(Window *win, int bn, bool pressed, int x, int y)
 	static long last_click = 0;
 
 	if(bn == 0) {
-		if(pressed) {
+		if(pressed) {	
+			wm->grab_mouse(win);
+			wm->raise_window(win);
+			prev_x = x;
+			prev_y = y;
+		}
+		else {
 			long time = winnie_get_time();
 			if((time - last_click) < DCLICK_INTERVAL) {
 				Window *child = win->get_children()[0];
 				Window::State state = child->get_state();
 				if(state == Window::STATE_MAXIMIZED) {
-					child->set_state(Window::STATE_NORMAL);
 					wm->unmaximize_window(child);
 				}
 				else if(state == Window::STATE_NORMAL) {
 					wm->maximize_window(child);
 				}
 			}
-
-			wm->grab_mouse(win);
-			wm->raise_window(win);
-			prev_x = x;
-			prev_y = y;
-
 			last_click = time;
-		}
-		else {
+
 			wm->release_mouse();
 		}
 	}
@@ -439,7 +461,9 @@ static void motion(Window *win, int x, int y)
 		prev_x = x - dx;
 		prev_y = y - dy;
 
-		Rect rect = win->get_rect();
-		win->move(rect.x + dx, rect.y + dy);
+		if(win->get_children()[0]->get_state() != Window::STATE_MAXIMIZED) {
+			Rect rect = win->get_rect();
+			win->move(rect.x + dx, rect.y + dy);
+		}
 	}
 }

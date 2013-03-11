@@ -9,6 +9,10 @@ public:
 	unsigned char *pixels;
 
 	Pixmap();
+
+	Pixmap(const Pixmap &pixmap);
+	Pixmap &operator=(const Pixmap& pixmap);
+
 	~Pixmap();
 
 	int get_width() const;

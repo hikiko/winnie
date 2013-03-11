@@ -39,6 +39,13 @@ int main()
 	wm->add_window(win1);
 	wm->add_window(win2);
 
+	Pixmap bg;
+	if(!(bg.load("data/bg.ppm"))) {
+		fprintf(stderr, "failed to load pixmap\n");
+	}
+
+	wm->set_background(&bg);
+
 	while(1) {
 		process_events();
 	}

@@ -27,8 +27,10 @@ void blit(unsigned char *src_img, const Rect &src_rect, unsigned char* dest_img,
 void blit_key(unsigned char *src_img, const Rect &src_rect, unsigned char* dest_img,
 		const Rect &dest_rect, int dest_x, int dest_y, int key_r, int key_g, int key_b);
 
-void gfx_update();
+void gfx_update(const Rect &rect);
 
 void wait_vsync(); // vertical synchronization
+
+void get_rgb_order(int *r, int *g, int *b);
 
 #endif //GFX_H_

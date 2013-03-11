@@ -9,6 +9,22 @@ Pixmap::Pixmap()
 	pixels = 0;
 }
 
+Pixmap::Pixmap(const Pixmap &pixmap)
+{
+	width = height = 0;
+	pixels = 0;
+	set_image(pixmap.width, pixmap.height, pixmap.pixels);
+}
+
+Pixmap &Pixmap::operator=(const Pixmap &pixmap)
+{
+	if(this != &pixmap) {
+		set_image(pixmap.width, pixmap.height, pixmap.pixels);
+	}
+
+	return *this;
+}
+
 Pixmap::~Pixmap()
 {
 	if(pixels) {
@@ -28,7 +44,7 @@ int Pixmap::get_height() const
 
 Rect Pixmap::get_rect() const
 {
-	Rect rect = {0, 0, width, height};
+	Rect rect(0, 0, width, height);
 	return rect;
 }
 
@@ -58,7 +74,61 @@ unsigned char *Pixmap::get_image()
 
 bool Pixmap::load(const char *fname)
 {
-	return false;	// TODO
+	FILE *fp;
+	int hdrline = 0;
+
+	if(!(fp = fopen(fname, "rb"))) {
+		fprintf(stderr, "failed to open pixmap: %s: %s\n", fname, strerror(errno));
+		return false;
+	}
+
+	/* read ppm header */
+	while(hdrline < 3) {
+		char buf[64];
+
+		if(!fgets(buf, sizeof buf, fp))
+			goto err;
+		
+		/* skip comments */
+		if(buf[0] == '#')
+			continue;
+
+		switch(hdrline++) {
+		case 0:
+			/* first header line should be P6 */
+			if(strcmp(buf, "P6\n") != 0)
+				goto err;
+			break;
+
+		case 1:
+			/* second header line contains the pixmap dimensions */
+			if(sscanf(buf, "%d %d", &width, &height) != 2)
+				goto err;
+			break;
+		}
+	}
+
+	set_image(width, height, 0);
+
+	for(int i=0; i<width * height * 4; i++) {
+		int c;
+		if(i % 4 != 3) {
+			c = fgetc(fp);
+			if(c < 0)
+				goto err;
+		}
+		else {
+			c = 255;
+		}
+		pixels[i] = c;
+	}
+	fclose(fp);
+	return true;
+
+err:
+	fprintf(stderr, "failed to load pixmap: %s\n", fname);
+	fclose(fp);
+	return false;
 }
 
 bool Pixmap::save(const char *fname) const

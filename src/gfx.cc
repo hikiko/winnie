@@ -47,6 +47,9 @@ void fill_rect(const Rect &rect, int r, int g, int b)
 void blit(unsigned char *src_img, const Rect &src_rect, unsigned char* dest_img,
 		const Rect &dest_rect, int dest_x, int dest_y)
 {
+	int red_offs, green_offs, blue_offs;
+	get_rgb_order(&red_offs, &green_offs, &blue_offs);
+
 	Rect irect = rect_intersection(get_clipping_rect(), dest_rect);
 
 	int width = src_rect.width;
@@ -82,7 +85,11 @@ void blit(unsigned char *src_img, const Rect &src_rect, unsigned char* dest_img,
 	unsigned char *dptr = dest_img + (dest_y * dest_rect.width + dest_x) * 4;
 
 	for(int i=0; i<height; i++) {
-		memcpy(dptr, sptr, width * 4);
+		for(int j=0; j<width; j++) {
+			dptr[j * 4 + red_offs] = sptr[j * 4];
+			dptr[j * 4 + green_offs] = sptr[j * 4 + 1];
+			dptr[j * 4 + blue_offs] = sptr[j * 4 + 2];
+		}
 		sptr += src_rect.width * 4;
 		dptr += dest_rect.width * 4;
 	}
@@ -91,6 +98,9 @@ void blit(unsigned char *src_img, const Rect &src_rect, unsigned char* dest_img,
 void blit_key(unsigned char *src_img, const Rect &src_rect, unsigned char* dest_img,
 		const Rect &dest_rect, int dest_x, int dest_y, int key_r, int key_g, int key_b)
 {
+	int red_offs, green_offs, blue_offs;
+	get_rgb_order(&red_offs, &green_offs, &blue_offs);
+
 	Rect irect = rect_intersection(get_clipping_rect(), dest_rect);
 
 	int width = src_rect.width;
@@ -132,9 +142,9 @@ void blit_key(unsigned char *src_img, const Rect &src_rect, unsigned char* dest_
 			int b = sptr[j * 4 + 2];
 
 			if(r != key_r || g != key_g || b != key_b) {
-				dptr[j * 4] = r;
-				dptr[j * 4 + 1] = g;
-				dptr[j * 4 + 2] = b;
+				dptr[j * 4 + red_offs] = r;
+				dptr[j * 4 + green_offs] = g;
+				dptr[j * 4 + blue_offs] = b;
 			}
 		}
 

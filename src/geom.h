@@ -4,6 +4,9 @@
 struct Rect {
 	int x, y;
 	int width, height;
+
+	Rect();
+	Rect(int x, int y, int w, int h);
 };
 
 Rect rect_union(const Rect &a, const Rect &b);

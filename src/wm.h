@@ -28,6 +28,7 @@ private:
 	Window *grab_win;
 
 	Pixmap mouse_cursor;
+	Pixmap *background;
 
 	void create_frame(Window *win);
 	void destroy_frame(Window *win);
@@ -54,6 +55,9 @@ public:
 
 	void set_unfocused_frame_color(int r, int g, int b);
 	void get_unfocused_frame_color(int *r, int *g, int *b) const;
+
+	void set_background(const Pixmap *pixmap);
+	const Pixmap *get_background() const;
 
 	Window *get_grab_window() const;
 
