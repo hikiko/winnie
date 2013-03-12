@@ -4,9 +4,17 @@
 #include <stdint.h>
 #include <string.h>
 
+#include <errno.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 #include <map>
 
 #include "shalloc.h"
+
+#define SHMNAME	"/winnie.shm"
 
 #define POOL_SIZE 16777216
 #define BLOCK_SIZE 512
@@ -21,6 +29,7 @@ static void alloc_blocks(int block_pos, int num_blocks);
 static void free_blocks(int block_pos, int num_blocks);
 
 static void print_stats();
+static int fd;
 
 static unsigned char *pool;
 static std::map<int, int> alloc_sizes; //starting block -> number of blocks
@@ -39,9 +48,23 @@ static Statistics stats;
 
 bool init_shared_memory()
 {
-	if(!(pool = (unsigned char *)malloc(POOL_SIZE))) {
+	if(((fd = shm_open(SHMNAME, O_RDWR | O_CREAT, S_IRWXU)) == -1)) {
+		fprintf(stderr, "Failed to open shared memory: %s\n", strerror(errno));
 		return false;
 	}
+	ftruncate(fd, POOL_SIZE);
+
+	if((pool = (unsigned char*)mmap(0, POOL_SIZE, PROT_READ | PROT_WRITE,
+					MAP_SHARED, fd, 0)) == (void*)-1) {
+		fprintf(stderr, "Failed to map shared memory: %s\n", strerror(errno));
+	}
+
+	shm_unlink(SHMNAME);
+
+	//TODO delete it
+	/*if(!(pool = (unsigned char *)malloc(POOL_SIZE))) {
+		return false;
+	}*/
 
 	for(int i=0; i<BITMAP_SIZE; i++) {
 		bitmap[i] = 0;
@@ -56,7 +79,10 @@ bool init_shared_memory()
 void destroy_shared_memory()
 {
 	print_stats();
-	free(pool);
+	//free(pool); //TODO DELETE it
+	if(munmap(pool, POOL_SIZE) == -1) {
+		fprintf(stderr, "Failed to unmap shared memory: %s\n", strerror(errno));
+	}
 }
 
 void *sh_malloc(size_t bytes)

@@ -18,7 +18,7 @@ endif
 
 CXX = g++
 CXXFLAGS = -pedantic -Wall $(dbg) $(opt) $(inc) $(def) `freetype-config --cflags`
-LDFLAGS = $(libs) `freetype-config --libs`
+LDFLAGS = $(libs) `freetype-config --libs` -lrt
 
 $(bin): $(obj)
 	$(CXX) -o $@ $(obj) $(LDFLAGS)
