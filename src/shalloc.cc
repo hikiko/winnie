@@ -61,11 +61,6 @@ bool init_shared_memory()
 
 	shm_unlink(SHMNAME);
 
-	//TODO delete it
-	/*if(!(pool = (unsigned char *)malloc(POOL_SIZE))) {
-		return false;
-	}*/
-
 	for(int i=0; i<BITMAP_SIZE; i++) {
 		bitmap[i] = 0;
 	}
@@ -79,7 +74,6 @@ bool init_shared_memory()
 void destroy_shared_memory()
 {
 	print_stats();
-	//free(pool); //TODO DELETE it
 	if(munmap(pool, POOL_SIZE) == -1) {
 		fprintf(stderr, "Failed to unmap shared memory: %s\n", strerror(errno));
 	}
