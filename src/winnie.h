@@ -31,7 +31,7 @@ Author: Eleni Maria Stea <elene.mst@gmail.com>
 #include "window.h"
 #include "wm.h"
 
-struct subsys {
+struct Subsys {
 	int graphics_offset;
 	int keyboard_offset;
 	int mouse_offset;
@@ -43,5 +43,7 @@ bool winnie_init();
 void winnie_shutdown();
 
 long winnie_get_time();
+
+Subsys *get_subsys();
 
 #endif

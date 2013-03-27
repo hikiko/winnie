@@ -26,9 +26,15 @@ Author: Eleni Maria Stea <elene.mst@gmail.com>
 #include "shalloc.h"
 #include "winnie.h"
 
+static Subsys *subsys;
+
 bool winnie_init()
 {
 	if(!init_shared_memory()) {
+		return false;
+	}
+
+	if(!(subsys = (Subsys*)sh_malloc(sizeof *subsys))) {
 		return false;
 	}
 
@@ -62,6 +68,9 @@ void winnie_shutdown()
 	destroy_keyboard();
 	destroy_mouse();
 	destroy_text();
+	destroy_window_manager();
+
+	sh_free(subsys);
 
 	destroy_shared_memory();
 }
@@ -79,4 +88,9 @@ long winnie_get_time()
 	}
 
 	return (tv.tv_usec - init_tv.tv_usec) / 1000 + (tv.tv_sec - init_tv.tv_sec) * 1000;
+}
+
+Subsys *get_subsys()
+{
+	return subsys;
 }

@@ -30,4 +30,6 @@ void destroy_shared_memory();
 void *sh_malloc(size_t bytes);
 void sh_free(void *ptr);
 
+void *get_pool();
+
 #endif // SHALLOC_H_

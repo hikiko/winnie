@@ -36,6 +36,7 @@ Author: Eleni Maria Stea <elene.mst@gmail.com>
 
 #include "gfx.h"
 #include "shalloc.h"
+#include "winnie.h"
 
 #define FRAMEBUFFER_SIZE(xsz, ysz, bpp) ((xsz) * (ysz) * (bpp) / CHAR_BIT)
 
@@ -57,6 +58,8 @@ bool init_gfx()
 	if(!(gfx = (Graphics*)sh_malloc(sizeof *gfx))) {
 		return false;
 	}
+
+	get_subsys()->graphics_offset = (int)((char*)gfx - (char*)get_pool());
 
 	dev_fd = -1;
 

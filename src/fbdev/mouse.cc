@@ -36,6 +36,7 @@ Author: Eleni Maria Stea <elene.mst@gmail.com>
 #include "mouse.h"
 #include "shalloc.h"
 #include "window.h"
+#include "winnie.h"
 #include "wm.h"
 
 #define BN_LEFT		1
@@ -59,6 +60,7 @@ bool init_mouse()
 	if(!(mouse = (Mouse*)sh_malloc(sizeof *mouse))) {
 		return false;
 	}
+	get_subsys()->mouse_offset = (int)((char*)mouse - (char*)get_pool());
 	memset(mouse, 0, sizeof *mouse);
 
 	mouse->dev_fd = -1;

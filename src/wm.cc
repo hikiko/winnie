@@ -27,10 +27,11 @@ Author: Eleni Maria Stea <elene.mst@gmail.com>
 #include "gfx.h"
 #include "mouse.h"
 #include "mouse_cursor.h"
+#include "shalloc.h"
 #include "text.h"
-#include "wm.h"
 #include "window.h"
 #include "winnie.h"
+#include "wm.h"
 
 #define DCLICK_INTERVAL 400
 
@@ -42,16 +43,22 @@ static void motion(Window *win, int x, int y);
 
 bool init_window_manager()
 {
-	if(!(wm = new WindowManager)) {
+	void *wm_mem;
+	if(!(wm_mem = sh_malloc(sizeof *wm))) {
 		return false;
 	}
+
+	wm = new (wm_mem) WindowManager; 
+
+	get_subsys()->wm_offset = (int)((char*)wm - (char*)get_pool());
 
 	return true;
 }
 
 void destroy_window_manager()
 {
-	delete wm;
+	wm->~WindowManager();
+	sh_free(wm);
 }
 
 void WindowManager::create_frame(Window *win)

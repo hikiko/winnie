@@ -24,8 +24,9 @@ Author: Eleni Maria Stea <elene.mst@gmail.com>
 
 #include "mouse.h"
 #include "shalloc.h"
-#include "window.h"
 #include "wm.h"
+#include "window.h"
+#include "winnie.h"
 
 extern SDL_Event sdl_event;
 
@@ -42,6 +43,8 @@ bool init_mouse()
 	if(!(mouse = (Mouse*)sh_malloc(sizeof *mouse))) {
 		return false;
 	}
+	get_subsys()->mouse_offset = (int)((char*)mouse - (char*)get_pool());
+
 	memset(mouse, 0, sizeof *mouse);
 	return true;
 }

@@ -26,6 +26,7 @@ Author: Eleni Maria Stea <elene.mst@gmail.com>
 
 #include "gfx.h"
 #include "shalloc.h"
+#include "winnie.h"
 
 static SDL_Surface *fbsurf;
 
@@ -48,6 +49,8 @@ bool init_gfx()
 	if(!(gfx = (Graphics*)sh_malloc(sizeof *gfx))) {
 		return false;
 	}
+
+	get_subsys()->graphics_offset = (int)((char*)gfx - (char*)get_pool());
 
 	Rect scr_rect(0, 0, 1024, 768);
 	gfx->screen_rect = scr_rect;

@@ -25,6 +25,7 @@ Author: Eleni Maria Stea <elene.mst@gmail.com>
 #include "gfx.h"
 #include "shalloc.h"
 #include "text.h"
+#include "winnie.h"
 
 #define DPI 72
 #define FONT_PATH "/usr/share/fonts/truetype/ttf-dejavu/DejaVuSansMono.ttf"
@@ -46,6 +47,8 @@ bool init_text()
 	if(!(text = (Text*)sh_malloc(sizeof *text))) {
 		return false;
 	}
+
+	get_subsys()->text_offset = (int)((char*)text - (char*)get_pool());
 
 	if(FT_Init_FreeType(&text->ft_lib)) {
 		fprintf(stderr, "Failed to initialize the FreeType library!\n");

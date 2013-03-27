@@ -33,6 +33,7 @@ Author: Eleni Maria Stea <elene.mst@gmail.com>
 #include "keyboard.h"
 #include "shalloc.h"
 #include "window.h"
+#include "winnie.h"
 #include "wm.h"
 
 struct Keyboard {
@@ -47,6 +48,8 @@ bool init_keyboard()
 	if(!(keyboard = (Keyboard*)sh_malloc(sizeof *keyboard))) {
 		return false;
 	}
+
+	get_subsys()->keyboard_offset = (int)((char*)keyboard - (char*)get_pool());
 
 	keyboard->ttystate = keyboard->CANONICAL;
 	keyboard->dev_fd = -1;

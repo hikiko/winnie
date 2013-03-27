@@ -144,6 +144,11 @@ void sh_free(void *ptr)
 	}
 }
 
+void *get_pool()
+{
+	return (void*)pool;
+}
+
 static bool is_allocated(int block_number)
 {
 	int idx = block_number / 32;

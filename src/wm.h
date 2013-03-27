@@ -26,6 +26,7 @@ Author: Eleni Maria Stea <elene.mst@gmail.com>
 
 #include "geom.h"
 #include "pixmap.h"
+#include "winnie.h"
 
 class Window;
 
