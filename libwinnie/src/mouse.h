@@ -27,6 +27,9 @@ struct Rect;
 bool init_mouse();
 void destroy_mouse();
 
+bool client_open_mouse(void *smem_start, int offset);
+void client_close_mouse();
+
 void set_mouse_bounds(const Rect &rect);
 
 int get_mouse_fd();

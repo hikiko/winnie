@@ -150,6 +150,16 @@ void destroy_gfx()
 	sh_free(gfx);
 }
 
+bool client_open_gfx(void *smem_start, int offset)
+{
+	gfx = (unsigned char*)smem_start + offset;
+	return true;
+}
+
+void client_close_gfx()
+{
+}
+
 unsigned char *get_framebuffer()
 {
 	return gfx->pixmap->pixels;

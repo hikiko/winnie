@@ -90,6 +90,16 @@ void destroy_gfx()
 	SDL_Quit();
 }
 
+bool client_open_gfx(void *smem_start, int offset)
+{
+	gfx = (Graphics*)((unsigned char*)smem_start + offset);
+	return true;
+}
+
+void client_close_gfx()
+{
+}
+
 unsigned char *get_framebuffer()
 {
 	return gfx->pixmap->pixels;

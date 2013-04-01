@@ -24,6 +24,9 @@ Author: Eleni Maria Stea <elene.mst@gmail.com>
 
 #include <cstring>
 
+#define POOL_SIZE 16777216
+#define SHMNAME "/winnie.shm"
+
 bool init_shared_memory();
 void destroy_shared_memory();
 

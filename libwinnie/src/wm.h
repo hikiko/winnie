@@ -33,6 +33,9 @@ class Window;
 bool init_window_manager();
 void destroy_window_manager(); 
 
+bool client_open_wm(void *smem_start, int offset);
+void client_close_wm();
+
 class WindowManager {
 private:
 	std::list<Window*> windows;

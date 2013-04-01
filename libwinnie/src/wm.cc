@@ -61,6 +61,17 @@ void destroy_window_manager()
 	sh_free(wm);
 }
 
+
+bool client_open_wm(void *smem_start, int offset)
+{
+	wm = (WindowManager*) ((unsigned char*)smem_start + offset);
+	return true;
+}
+
+void client_close_wm()
+{
+}
+
 void WindowManager::create_frame(Window *win)
 {
 	Window *frame = new Window;

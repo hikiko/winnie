@@ -1,7 +1,7 @@
 src = $(wildcard src/*.cc) $(wildcard src/fbdev/*.cc) $(wildcard src/sdl/*.cc)
 obj = $(src:.cc=.o)
 dep = $(obj:.o=.d)
-bin = wserver
+bin = clock
 
 dbg = -g
 opt = -O0
@@ -18,7 +18,7 @@ endif
 
 CXX = g++
 CXXFLAGS = -pedantic -Wall $(dbg) $(opt) $(inc) $(def) `freetype-config --cflags`
-LDFLAGS = -L../libwinnie $(libs) `freetype-config --libs` -lrt -lwinnie
+LDFLAGS = -L../libwinnie/ $(libs) `freetype-config --libs` -lrt -lwinnie
 
 $(bin): $(obj)
 	$(CXX) -o $@ $(obj) $(LDFLAGS) -Wl,-rpath=../libwinnie

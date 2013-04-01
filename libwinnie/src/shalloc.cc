@@ -21,8 +21,8 @@ Author: Eleni Maria Stea <elene.mst@gmail.com>
 
 #include <assert.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include <errno.h>
@@ -35,9 +35,6 @@ Author: Eleni Maria Stea <elene.mst@gmail.com>
 
 #include "shalloc.h"
 
-#define SHMNAME	"/winnie.shm"
-
-#define POOL_SIZE 16777216
 #define BLOCK_SIZE 512
 
 #define NUM_BLOCKS (POOL_SIZE / BLOCK_SIZE)

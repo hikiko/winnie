@@ -108,6 +108,16 @@ void destroy_keyboard()
 	sh_free(keyboard);
 }
 
+bool client_open_keyboard(void *smem_start, int offset)
+{
+	keyboard = (unsigned char*)smem_start + offset;
+	return true;
+}
+
+void client_close_keyboard()
+{
+}
+
 int get_keyboard_fd()
 {
 	return keyboard->dev_fd;

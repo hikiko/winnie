@@ -28,6 +28,9 @@ Author: Eleni Maria Stea <elene.mst@gmail.com>
 bool init_gfx();
 void destroy_gfx();
 
+bool client_open_gfx(void *smem_start, int offset);
+void client_close_gfx();
+
 unsigned char *get_framebuffer();
 Pixmap *get_framebuffer_pixmap();
 

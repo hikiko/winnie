@@ -54,6 +54,16 @@ void destroy_mouse()
 	sh_free(mouse);
 }
 
+bool client_open_mouse(void *smem_start, int offset)
+{
+	mouse = (Mouse*)((unsigned char*)smem_start + offset);
+	return true;
+}
+
+void client_close_mouse()
+{
+}
+
 void set_mouse_bounds(const Rect &rect)
 {
 }

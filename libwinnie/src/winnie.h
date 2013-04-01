@@ -42,6 +42,9 @@ struct Subsys {
 bool winnie_init();
 void winnie_shutdown();
 
+bool winnie_open();
+void winnie_close();
+
 long winnie_get_time();
 
 Subsys *get_subsys();

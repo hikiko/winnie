@@ -37,6 +37,15 @@ void destroy_keyboard()
 {
 }
 
+bool client_open_keyboard(void *smem_start, int offset)
+{
+	return true;
+}
+
+void client_close_keyboard()
+{
+}
+
 int get_keyboard_fd()
 {
 	return -1;

@@ -75,6 +75,16 @@ void destroy_text()
 	sh_free(text);
 }
 
+bool client_open_text(void *smem_start, int offset)
+{
+	text = (Text*)((unsigned char*)smem_start + offset);
+	return true;
+}
+
+void client_close_text()
+{
+}
+
 void draw_text(const char *txt, Pixmap *pixmap)
 {
 	if(!pixmap) {
