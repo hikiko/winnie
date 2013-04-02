@@ -77,8 +77,6 @@ bool init_shared_memory()
 		fprintf(stderr, "Failed to map shared memory: %s\n", strerror(errno));
 	}
 
-	shm_unlink(SHMNAME);
-
 	for(int i=0; i<BITMAP_SIZE; i++) {
 		bitmap[i] = 0;
 	}
@@ -95,6 +93,7 @@ void destroy_shared_memory()
 	if(munmap(pool, POOL_SIZE) == -1) {
 		fprintf(stderr, "Failed to unmap shared memory: %s\n", strerror(errno));
 	}
+	shm_unlink(SHMNAME);
 }
 
 void *sh_malloc(size_t bytes)

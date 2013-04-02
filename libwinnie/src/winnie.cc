@@ -96,7 +96,6 @@ bool winnie_open()
 		fprintf(stderr, "Failed to map shared memory: %s\n", strerror(errno));
 		return false;
 	}
-	shm_unlink(SHMNAME);
 
 	subsys = (Subsys*)pool;
 

@@ -152,7 +152,7 @@ void destroy_gfx()
 
 bool client_open_gfx(void *smem_start, int offset)
 {
-	gfx = (unsigned char*)smem_start + offset;
+	gfx = (Graphics*)((unsigned char*)smem_start + offset);
 	return true;
 }
 

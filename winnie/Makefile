@@ -20,7 +20,7 @@ CXX = g++
 CXXFLAGS = -pedantic -Wall $(dbg) $(opt) $(inc) $(def) `freetype-config --cflags`
 LDFLAGS = -L../libwinnie $(libs) `freetype-config --libs` -lrt -lwinnie
 
-$(bin): $(obj)
+$(bin): $(obj) ../libwinnie/libwinnie.so
 	$(CXX) -o $@ $(obj) $(LDFLAGS) -Wl,-rpath=../libwinnie
 
 -include $(dep)

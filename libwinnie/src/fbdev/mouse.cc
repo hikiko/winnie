@@ -85,7 +85,7 @@ void destroy_mouse()
 
 bool client_open_mouse(void *smem_start, int offset)
 {
-	mouse = (unsigned char*)smem_start + offset;
+	mouse = (Mouse*)((unsigned char*)smem_start + offset);
 	return true;
 }
 

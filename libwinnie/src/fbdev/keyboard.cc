@@ -110,7 +110,7 @@ void destroy_keyboard()
 
 bool client_open_keyboard(void *smem_start, int offset)
 {
-	keyboard = (unsigned char*)smem_start + offset;
+	keyboard = (Keyboard*)((unsigned char*)smem_start + offset);
 	return true;
 }
 
