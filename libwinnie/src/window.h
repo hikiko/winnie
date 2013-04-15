@@ -84,11 +84,13 @@ public:
 	void set_keyboard_callback(KeyboardFuncType func);
 	void set_mouse_button_callback(MouseButtonFuncType func);
 	void set_mouse_motion_callback(MouseMotionFuncType func);
+	void set_timer_callback(TimerFuncType func);
 
 	const DisplayFuncType get_display_callback() const;
 	const KeyboardFuncType get_keyboard_callback() const;
 	const MouseButtonFuncType get_mouse_button_callback() const;
 	const MouseMotionFuncType get_mouse_motion_callback() const;
+	const TimerFuncType get_timer_callback() const;
 
 	// win hierarchy
 	void add_child(Window *win);

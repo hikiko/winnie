@@ -36,21 +36,23 @@ void process_events()
 		return;
 	}
 
-	switch(sdl_event.type) {
-	case SDL_KEYDOWN:
-	case SDL_KEYUP:
-		process_keyboard_event();
-		break;
-	case SDL_MOUSEMOTION:
-	case SDL_MOUSEBUTTONDOWN:
-	case SDL_MOUSEBUTTONUP:
-		process_mouse_event();
-		break;
-	case SDL_QUIT:
-		exit(0);
-	default:
-		break;
-	}
+	do {
+		switch(sdl_event.type) {
+		case SDL_KEYDOWN:
+		case SDL_KEYUP:
+			process_keyboard_event();
+			break;
+		case SDL_MOUSEMOTION:
+		case SDL_MOUSEBUTTONDOWN:
+		case SDL_MOUSEBUTTONUP:
+			process_mouse_event();
+			break;
+		case SDL_QUIT:
+			exit(0);
+		default:
+			break;
+		}
+	} while(SDL_PollEvent(&sdl_event));
 }
 
 #endif // WINNIE_SDL

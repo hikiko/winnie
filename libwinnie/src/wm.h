@@ -31,7 +31,7 @@ Author: Eleni Maria Stea <elene.mst@gmail.com>
 class Window;
 
 bool init_window_manager();
-void destroy_window_manager(); 
+void destroy_window_manager();
 
 bool client_open_wm(void *smem_start, int offset);
 void client_close_wm();
@@ -80,6 +80,9 @@ public:
 
 	void set_unfocused_frame_color(int r, int g, int b);
 	void get_unfocused_frame_color(int *r, int *g, int *b) const;
+
+	void set_background_color(int r, int g, int b);
+	void get_background_color(int *r, int *g, int *b) const;
 
 	void set_background(const Pixmap *pixmap);
 	const Pixmap *get_background() const;

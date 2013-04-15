@@ -51,6 +51,9 @@ void blit(unsigned char *src_img, const Rect &src_rect, unsigned char* dest_img,
 void blit_key(unsigned char *src_img, const Rect &src_rect, unsigned char* dest_img,
 		const Rect &dest_rect, int dest_x, int dest_y, int key_r, int key_g, int key_b);
 
+void draw_line(Pixmap *pixmap, int x0, int y0, int x1, int y1, int r, int g, int b);
+void draw_polygon(Pixmap *pixmap, int *vpos, int *vtex, int num_verts, int r, int g, int b);
+
 void gfx_update(const Rect &rect);
 
 void wait_vsync(); // vertical synchronization

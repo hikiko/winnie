@@ -120,14 +120,14 @@ void Window::draw(Rect *dirty_region)
 	if(intersect.width && intersect.height) {
 		Rect prev_clip = get_clipping_rect();
 		set_clipping_rect(abs_rect);
-		
+
 		if(callbacks.display) {
 			callbacks.display(this);
 		}
 		dirty = false;
 
 		draw_children(abs_rect);
-		
+
 		*dirty_region = rect_union(*dirty_region, abs_rect);
 		set_clipping_rect(prev_clip);
 	}
@@ -198,6 +198,11 @@ void Window::set_mouse_motion_callback(MouseMotionFuncType func)
 	callbacks.motion = func;
 }
 
+void Window::set_timer_callback(TimerFuncType func)
+{
+	callbacks.timer = func;
+}
+
 const DisplayFuncType Window::get_display_callback() const
 {
 	return callbacks.display;
@@ -216,6 +221,11 @@ const MouseButtonFuncType Window::get_mouse_button_callback() const
 const MouseMotionFuncType Window::get_mouse_motion_callback() const
 {
 	return callbacks.motion;
+}
+
+const TimerFuncType Window::get_timer_callback() const
+{
+	return callbacks.timer;
 }
 
 void Window::add_child(Window *win)

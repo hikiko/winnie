@@ -48,7 +48,7 @@ bool init_window_manager()
 		return false;
 	}
 
-	wm = new (wm_mem) WindowManager; 
+	wm = new (wm_mem) WindowManager;
 
 	get_subsys()->wm_offset = (int)((char*)wm - (char*)get_pool());
 
@@ -240,13 +240,11 @@ void WindowManager::set_focused_window(Window *win)
 		return;
 	}
 
-	Window *parent;
 	if(focused_win) {
 		// invalidate the frame (if any)
-		parent = focused_win->get_parent();
+		Window *parent = focused_win->get_parent();
 		if(parent && parent != root_win) {
 			parent->invalidate();
-			fill_rect(parent->get_absolute_rect(), frame_ucolor[0], frame_ucolor[1], frame_ucolor[2]);
 		}
 	}
 
@@ -257,8 +255,6 @@ void WindowManager::set_focused_window(Window *win)
 
 	if(win->get_focusable()) {
 		focused_win = win;
-		parent = focused_win->get_parent();
-		fill_rect(parent->get_absolute_rect(), frame_fcolor[0], frame_fcolor[1], frame_fcolor[2]);
 		return;
 	}
 
@@ -266,7 +262,6 @@ void WindowManager::set_focused_window(Window *win)
 	for(int i=0; i<win->get_children_count(); i++) {
 		if(children[0]->get_focusable()) {
 			set_focused_window(children[0]);
-			fill_rect(win->get_absolute_rect(), frame_fcolor[0], frame_fcolor[1], frame_fcolor[2]);
 			return;
 		}
 	}
@@ -328,6 +323,20 @@ void WindowManager::get_unfocused_frame_color(int *r, int *g, int *b) const
 	*r = frame_ucolor[0];
 	*g = frame_ucolor[1];
 	*b = frame_ucolor[2];
+}
+
+void WindowManager::set_background_color(int r, int g, int b)
+{
+	bg_color[0] = r;
+	bg_color[1] = g;
+	bg_color[2] = b;
+}
+
+void WindowManager::get_background_color(int *r, int *g, int *b) const
+{
+	*r = bg_color[0];
+	*g = bg_color[1];
+	*b = bg_color[2];
 }
 
 void WindowManager::set_background(const Pixmap *pixmap)
