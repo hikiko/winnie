@@ -17,8 +17,8 @@ else
 endif
 
 CXX = g++
-CXXFLAGS = -pedantic -Wall $(dbg) $(opt) $(inc) $(def) `freetype-config --cflags`
-LDFLAGS = -L../libwinnie $(libs) `freetype-config --libs` -lrt -lwinnie
+CXXFLAGS = -pedantic -Wall $(dbg) -fPIC -D_GNU_SOURCE $(opt) $(inc) $(def) `freetype-config --cflags`
+LDFLAGS = -L../libwinnie $(libs) `freetype-config --libs` -lrt -lwinnie -ldl
 
 $(bin): $(obj)
 	$(CXX) -o $@ $(obj) $(LDFLAGS) -Wl,-rpath=../libwinnie

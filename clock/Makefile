@@ -1,7 +1,7 @@
-src = $(wildcard src/*.cc) $(wildcard src/fbdev/*.cc) $(wildcard src/sdl/*.cc)
+src = $(wildcard src/*.cc)
 obj = $(src:.cc=.o)
 dep = $(obj:.o=.d)
-bin = clock
+lib_so = winnie_clock.so
 
 dbg = -g
 opt = -O0
@@ -18,10 +18,10 @@ endif
 
 CXX = g++
 CXXFLAGS = -pedantic -Wall $(dbg) $(opt) $(inc) $(def) `freetype-config --cflags`
-LDFLAGS = -L../libwinnie/ $(libs) `freetype-config --libs` -lrt -lwinnie
+LDFLAGS = -L../libwinnie/ $(libs) `freetype-config --libs` -lrt -lwinnie -ldl
 
-$(bin): $(obj)
-	$(CXX) -o $@ $(obj) $(LDFLAGS) -Wl,-rpath=../libwinnie
+$(lib_so): $(obj)
+	$(CXX) -o $@ -shared $(obj) $(LDFLAGS) -Wl,-rpath=../libwinnie
 
 -include $(dep)
 
@@ -30,5 +30,5 @@ $(bin): $(obj)
 
 .PHONY: clean
 clean:
-	rm -f $(obj) $(bin) $(dep)
+	rm -f $(obj) $(lib_so) $(dep)
 
