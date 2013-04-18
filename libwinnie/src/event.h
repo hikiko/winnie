@@ -40,4 +40,8 @@ struct Callbacks {
 
 void process_events();
 
+enum TimerMode {TIMER_ONESHOT, TIMER_REPEAT};
+
+void set_window_timer(Window *win, unsigned int msec, TimerMode mode = TIMER_ONESHOT);
+
 #endif

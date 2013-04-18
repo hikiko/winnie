@@ -306,7 +306,7 @@ void draw_polygon(Pixmap *pixmap, int *vpos, int *vtex, int num_verts, int r, in
 		}
 		unsigned char *pixptr = pixmap->pixels + (i * pixmap->width + x) * 4;
 
-		for(int j=0; j<dx; j++) {
+		for(int j=0; j<=dx; j++) {
 			pixptr[roffs] = r;
 			pixptr[goffs] = g;
 			pixptr[boffs] = b;

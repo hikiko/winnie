@@ -8,13 +8,10 @@ dbg = -g
 opt = -O3 -ffast-math -march=native
 inc = -Isrc
 
-backend = SDL
+include ../backend.mk
 
 ifeq ($(backend), SDL)
-	def = -DWINNIE_SDL
 	libs = -lSDL
-else
-	def = -DWINNIE_FBDEV
 endif
 
 CXX = g++

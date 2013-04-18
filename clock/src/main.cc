@@ -58,6 +58,8 @@ extern "C" bool init()
 	}
 
 	wm->add_window(clock_win);
+
+	set_window_timer(clock_win, 1000, TIMER_REPEAT);
 	return true;
 }
 
@@ -139,5 +141,5 @@ static void motion(Window *win, int x, int y)
 
 static void timer(Window *win)
 {
-	gfx_update(win->get_absolute_rect());
+	wm->invalidate_region(win->get_absolute_rect());
 }

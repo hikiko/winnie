@@ -41,7 +41,7 @@ static Graphics *gfx;
 
 bool init_gfx()
 {
-	if(SDL_Init(SDL_INIT_VIDEO) == -1) {
+	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) == -1) {
 		fprintf(stderr, "failed to initialize SDL\n");
 		return false;
 	}

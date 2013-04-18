@@ -1,16 +1,16 @@
 src = $(wildcard src/*.cc)
 obj = $(src:.cc=.o)
 dep = $(obj:.o=.d)
-lib_so = winnie_clock.so
+lib_so = winnie_tunnel.so
 
 dbg = -g
-opt = -O0
+opt = -O3 -ffast-math -march=native
 inc = -Isrc -I../libwinnie/src
 
 include ../backend.mk
 
 CXX = g++
-CXXFLAGS = -pedantic -Wall -fPIC $(dbg) $(opt) $(inc) $(def) `freetype-config --cflags`
+CXXFLAGS = -pedantic -Wall -Wno-trigraphs -fPIC $(dbg) $(opt) $(inc) $(def) `freetype-config --cflags`
 LDFLAGS = -L../libwinnie/ $(libs) `freetype-config --libs` -lrt -lwinnie -ldl
 
 $(lib_so): $(obj)

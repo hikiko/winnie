@@ -1,7 +1,7 @@
 src = $(wildcard src/*.cc)
 obj = $(src:.cc=.o)
 dep = $(obj:.o=.d)
-lib_so = winnie_clock.so
+lib_so = winnie_sysmon.so
 
 dbg = -g
 opt = -O0

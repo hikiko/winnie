@@ -19,10 +19,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Author: Eleni Maria Stea <elene.mst@gmail.com>
 */
 
-#ifndef CLIENT_PLUGINS_H_
-#define CLIENT_PLUGINS_H_
-
-bool init_client_plugins();
-void destroy_client_plugins();
-
-#endif	// CLIENT_PLUGINS_H_
+A system monitor for winnie.
