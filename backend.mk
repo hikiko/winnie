@@ -1,4 +1,4 @@
-backend = SDL
+backend = FBDEV
 
 ifeq ($(backend), SDL)
 	def = -DWINNIE_SDL

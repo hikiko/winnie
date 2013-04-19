@@ -20,16 +20,29 @@ Author: Eleni Maria Stea <elene.mst@gmail.com>
 */
 
 #ifdef WINNIE_FBDEV
+#include <list>
 #include <stdio.h>
 
 #include <errno.h>
 #include <unistd.h>
 #include <sys/select.h>
+#include <sys/time.h>
 
 #include "event.h"
 #include "wm.h"
 #include "keyboard.h"
 #include "mouse.h"
+
+struct TimerEvent {
+	long time;
+	Window *win;
+	TimerMode mode;
+	long interval;
+
+	bool operator <(const TimerEvent &rhs) const { return time < rhs.time; }
+};
+
+static std::list<TimerEvent> timers;
 
 void process_events()
 {
@@ -47,14 +60,78 @@ void process_events()
 
 		int maxfd = keyb_fd > mouse_fd ? keyb_fd : mouse_fd;
 
-		while(select(maxfd + 1, &read_set, 0, 0, 0) == -1 && errno == EINTR);
+		struct timeval *timeout = 0;
+		struct timeval tv;
+		if(!timers.empty()) {
+			long now = winnie_get_time();
+			long next_timer = timers.front().time - now;
 
-		if(FD_ISSET(keyb_fd, &read_set)) {
-			process_keyboard_event();
+			tv.tv_sec = next_timer / 1000;
+			tv.tv_usec = next_timer % 1000;
+			timeout = &tv;
 		}
-		if(FD_ISSET(mouse_fd, &read_set)) {
-			process_mouse_event();
+
+		int numfd;
+		while((numfd = select(maxfd + 1, &read_set, 0, 0, timeout)) == -1) {
+			if(errno != EINTR) {
+				break;
+			}
+		}
+
+		if(numfd > 0) {
+			if(FD_ISSET(keyb_fd, &read_set)) {
+				process_keyboard_event();
+			}
+			if(FD_ISSET(mouse_fd, &read_set)) {
+				process_mouse_event();
+			}
+		}
+
+		bool added_timer = false;
+		long now = winnie_get_time();
+		while(!timers.empty() && now >= timers.front().time) {
+			TimerEvent ev = timers.front();
+			timers.pop_front();
+
+			if(ev.mode == TIMER_REPEAT) {
+				ev.time = now + ev.interval;
+				timers.push_back(ev);
+				added_timer = true;
+			}
+
+			Window *win = ev.win;
+			TimerFuncType func = win->get_timer_callback();
+			if(func) {
+				func(win);
+			} else {
+				fprintf(stderr, "timer gone off but window has no timer callback\n");
+			}
+		}
+
+		if(added_timer) {
+			timers.sort();
 		}
 	}
 }
+
+void set_window_timer(Window *win, unsigned int msec, TimerMode mode)
+{
+	if(!win) {
+		fprintf(stderr, "set_window_timer null window\n");
+		return;
+	}
+	if(!win->get_timer_callback()) {
+		fprintf(stderr, "trying to start a timer without having a timer callback\n");
+		return;
+	}
+
+	TimerEvent ev;
+	ev.interval = (long)msec;
+	ev.time = winnie_get_time() + ev.interval;
+	ev.win = win;
+	ev.mode = mode;
+	timers.push_back(ev);
+	timers.sort();
+}
+
 #endif // WINNIE_FBDEV

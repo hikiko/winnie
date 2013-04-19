@@ -24,8 +24,8 @@ Author: Eleni Maria Stea <elene.mst@gmail.com>
 
 class Window;
 
-typedef void (*DisplayFuncType)(Window* win);
-typedef void (*KeyboardFuncType)(Window* win, int key, bool pressed);
+typedef void (*DisplayFuncType)(Window *win);
+typedef void (*KeyboardFuncType)(Window *win, int key, bool pressed);
 typedef void (*MouseButtonFuncType)(Window *win, int bn, bool pressed, int x, int y);
 typedef void (*MouseMotionFuncType)(Window *win, int x, int y);
 typedef void (*TimerFuncType)(Window *win);
